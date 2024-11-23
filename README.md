@@ -1,1 +1,17 @@
 # eco-blog
+
+# installation du projet 
+  1. Cloner le dépot git https://github.com/TechSymbioDigitalProject/eco-blog.git
+  2. Se déplacer dans le répertoire du projet backend eco-blog/backend
+  3. Installer les dépendances via la commande npm install
+  4. Créer le fichier .env à la racine du projet backend avec les variables d'environnement suivantes: 
+    PGUSER=postgres
+    PGPASSWORD="votre mot de passe"
+    PGHOST=localhost
+    PGDATABASE=blog_db
+    PGPORT=5432
+    PORT=3001 
+    JWT_SECRET="définir une clé secrète pour la création du JWT lors de la connexion de l'utilisateur"
+    JWT_SECRET_RESET="définir une clé secrète pour générer un JWT de demande de réinitialisation de mot de passe
+    EMAIL_USER="adresse mail du compte chargé de l envoi des email"
+    EMAIL_PASSWORD="mot de passe du compte chargé d envoyer les email"
