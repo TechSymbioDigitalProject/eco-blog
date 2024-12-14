@@ -72,14 +72,14 @@ function setAuthCookie(utilisateur, res) {
     };
 
     // Définir le cookie dans la réponse
-    res.cookie('jwt', token, cookieOptions);
+    res.cookie('track', token, cookieOptions);
   } catch (err) {
     // Journaliser une erreur si l'opération échoue
     logger.error('Erreur lors de la configuration du cookie JWT', {
       error: err.message,
       stack: err.stack,
     });
-    throw new Error('Impossible de définir le cookie d\'authentification.');
+    throw new Error('Impossible de définir le cookie.');
   }
 }
 
