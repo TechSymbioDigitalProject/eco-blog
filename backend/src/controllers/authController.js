@@ -53,6 +53,36 @@ async function login (req, res) {
   }
 }
 
+
+// Méthode pour la déconnexion utilisateur
+function logout (req, res) {
+  try {
+    // Effacer le cookie JWT
+    res.clearCookie('track', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Strict',
+    });
+
+    // Journaliser la déconnexion réussie
+    logger.info('Déconnexion réussi.', { ip: req.ip, url: req.originalUrl });
+
+    // Retourner une réponse de confirmation
+    res.status(200).json({ message: 'Déconnexion réussie.'});
+
+  } catch (err) {
+    // Journaliser les erreurs inattendues
+    logger.error('Erreur lors de la déconnexion utilisateur.', {
+      error: err.message,
+      stack: err.stack,
+      ip: req.ip,
+      url: req.originalUrl,
+    });
+    res.status(500).json({ message: 'Une erreur est survenue lors de la déconnexion.' });
+  }
+}
+
 module.exports = {
   login,
+  logout,
 };

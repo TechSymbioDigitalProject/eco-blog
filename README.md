@@ -22,4 +22,5 @@
     ## Table des matières
 
 ### Authentification
-- [Connexion utilisateur](./docs/auth/login.md)
+- [Connexion utilisateur](./backend/docs/auth/login.md),
+- [Déconnexion utilisateur](./backend//docs/auth/logout.md)

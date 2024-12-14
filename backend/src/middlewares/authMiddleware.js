@@ -1,9 +1,11 @@
 const authService = require('../services/authService');
+const logger = require('../config/logger');
+
 
 function authMiddleware(req, res, next) {
   try {
     // Récupérer le token JWT depuis le cookie
-    const token = req.cookies.jwt;
+    const token = req.cookies.track;
 
     // Vérifier si le token existe
     if (!token) {

@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const authController = require('../controllers/authController');
+const authMiddleware = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
@@ -28,5 +29,8 @@ const validateLogin = [
 
 // Route de connexion avec validation des données
 router.post('/login', validateLogin, authController.login);
+
+// Route de déconnexion (protégée)
+router.post('/logout', authMiddleware, authController.logout);
 
 module.exports = router;
