@@ -39,7 +39,7 @@ async function login (req, res) {
         id: utilisateur.id,
         nom: utilisateur.nom,
         prenom: utilisateur.prenom,
-        email: utilisateur.email,
+        roleId: utilisateur.roleId,
       },
     });
 
