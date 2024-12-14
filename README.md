@@ -15,3 +15,5 @@
     JWT_SECRET_RESET="définir une clé secrète pour générer un JWT de demande de réinitialisation de mot de passe
     EMAIL_USER="adresse mail du compte chargé de l envoi des email"
     EMAIL_PASSWORD="mot de passe du compte chargé d envoyer les email"
+    NODE_ENV=development "pour le fonctionnement du logger en mode developpement (affichage des erreur server dans la console et journalisation en production). 
+    

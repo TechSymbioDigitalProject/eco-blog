@@ -5,6 +5,7 @@ dotenv.config({ path: '../.env' });
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const authRoutes = require('./routes/authRoutes');
 
 // Création de l'application express
 const app = express();
@@ -22,6 +23,9 @@ app.use(express.json());
 
 // Servir les fichiers statiques (par exemple, des images téléchargées)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Routes d'authentification
+app.use('/api/auth', authRoutes);
 
 // Route de bienvenue
 // Vérifier que le serveur fonctionne correctement
