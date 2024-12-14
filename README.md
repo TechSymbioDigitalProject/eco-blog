@@ -17,3 +17,9 @@
     EMAIL_PASSWORD="mot de passe du compte chargé d envoyer les email"
     NODE_ENV=development "pour le fonctionnement du logger en mode developpement (affichage des erreur server dans la console et journalisation en production). 
     
+
+
+    ## Table des matières
+
+### Authentification
+- [Connexion utilisateur](./docs/auth/login.md)
