@@ -5,6 +5,7 @@ dotenv.config({ path: '../.env' });
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/authRoutes');
 
 // Création de l'application express
@@ -23,6 +24,9 @@ app.use(express.json());
 
 // Servir les fichiers statiques (par exemple, des images téléchargées)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Middleware pour parser les cookies
+app.use(cookieParser());
 
 // Routes d'authentification
 app.use('/api/auth', authRoutes);
