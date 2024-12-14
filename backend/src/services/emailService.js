@@ -54,6 +54,7 @@ async function sendPasswordResetEmail(to, resetToken) {
   }
 }
 
+
 module.exports = {
   sendPasswordResetEmail,
 };
