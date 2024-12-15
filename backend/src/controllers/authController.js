@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const Utilisateur = require('../models/Utilisateur');
 const authService = require('../services/authService');
+const { sendPasswordResetEmail } = require('../services/emailService');
 const logger = require('../config/logger');
 
 // Méthode pour la connexion utilisateur
@@ -82,7 +83,49 @@ function logout (req, res) {
   }
 }
 
+
+/**
+ * Méthode pour demander la réinitialisation du mot de passe.
+ */
+async function requestPasswordReset(req, res) {
+  // Validation des données avec express-validator
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const { email } = req.body;
+
+    // Rechercher l'utilisateur par email
+    const utilisateur = await Utilisateur.findByEmail(email);
+    if (!utilisateur) {
+      logger.warn('Demande de réinitialisation pour un email inconnu.', { email });
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    // Générer un token de réinitialisation
+    const resetToken = authService.generatePasswordResetToken(utilisateur);
+
+    // Envoyer l'email via le service d'email
+    await sendPasswordResetEmail(email, resetToken);
+
+    // Journaliser et retourner une confirmation
+    logger.info('Email de réinitialisation envoyé avec succès.', { email });
+    res.status(200).json({ message: 'Un email de réinitialisation a été envoyé.' });
+
+  } catch (err) {
+    logger.error('Erreur lors de la demande de réinitialisation du mot de passe.', {
+      error: err.message,
+      stack: err.stack,
+    });
+    res.status(500).json({ message: 'Une erreur est survenue, veuillez réessayer plus tard.' });
+  }
+}
+
+
 module.exports = {
   login,
   logout,
+  requestPasswordReset,
 };
