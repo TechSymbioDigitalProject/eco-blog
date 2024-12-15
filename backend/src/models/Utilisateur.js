@@ -125,6 +125,36 @@ class Utilisateur {
         }
     }
 
+
+    // Méthode static pour trouver un utilisateur par son id
+    static async findById(id) {
+      try {
+        // Exécuter la requête pour recherche l'utilisateur par id
+        const result = await db.query('SELECT * FROM utilisateurs WHERE id = $1', [id]);
+
+        // Vérifier si un utilisateur a été trouvé
+        if (result.rows[0]) {
+          const { id, nom, prenom, email, password, role_id } = result.rows[0];
+          return new Utilisateur(id, nom, prenom, email, password, role_id);
+        }
+
+        // Rertourner null si aucun utilisateur n'a étét trouvé
+        return null;
+
+      } catch (err) {
+        // Journaliser l'erreur avec le logger
+        logger.error('Erreur lors de la recherche de l\'utilisateur par Id', {
+          error: err.message,
+          stack: err.stack,
+          context: { userId: id }
+        });
+
+        // Relancer une erreur générique pour que le contrôleur puisse la gérer
+        throw new Error('Une erreur est survenue lors de la recherche de l\'utilisateur.');
+
+      }
+    }
+
 }
 
 module.exports = Utilisateur;
