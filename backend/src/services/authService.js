@@ -112,12 +112,31 @@ function generatePasswordResetToken(utilisateur) {
 }
 
 
+/**
+ * Vérifie et décode le token de réinitialisation de mot de passe.
+ * @param {string} token - Le token JWT à vérifier.
+ * @returns {Object|null} - Retourne le payload décodé si le token est valide, sinon null.
+ */
+function verifyPasswordResetToken(token) {
+  try {
+    return jwt.verify(token, JWT_SECRET_RESET);
+  } catch (error) {
+    logger.error('Erreur lors de la vérification du token de réinitialisation.', {
+      error: error.message,
+      stack: error.stack,
+    });
+    return null;
+  }
+}
+
 
 
 module.exports = {
   generateToken,
   verifyToken,
   setAuthCookie,
+  generatePasswordResetToken,
+  verifyPasswordResetToken,
 };
 
 
