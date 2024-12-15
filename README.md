@@ -24,4 +24,4 @@
 ### Authentification
 - [Connexion utilisateur](./backend/docs/auth/login.md),
 - [Déconnexion utilisateur](./backend//docs/auth/logout.md),
-- [Demande de réinitialisation du mot de passe](./backend//docs/auth/reset-password.md)
+- [Demande de réinitialisation du mot de passe](./backend//docs/auth/reset-password-request.md)
