@@ -1,74 +1,99 @@
-# Demande de réinitialisation du mot de passe
+# Changement du mot de passe utilisateur
 
 ## 📄 Description
-Cette route permet à un utilisateur de demander la réinitialisation de son mot de passe.
-Un e-mail contenant un lien temporaire de réinitialisation sera envoyé à l'adresse e-mail fournie si celle-ci est valide.
+Cette fonctionnalité permet à un utilisateur de réinitialiser son mot de passe après avoir demandé un lien de réinitialisation par email. 
+Le backend valide le token JWT transmis et met à jour le mot de passe.
+
 
 ## 🛠️ Route d'API
 
 - **Méthode** : `POST`
-- **URL** : `/api/auth/password-reset-request`
+- **URL** : `/api/auth/reset-password`
 
 
 ## 🔍 Données attendues
-Le corps de la requête doit contenir un objet JSON avec les champs suivants :
 
+Le corps de la requête doit contenir un **objet JSON** avec les champs suivants :
 
-| Champ        | Type     | Obligatoire | Description                                    |
-|--------------|----------|-------------|------------------------------------------------|
-| `email`      | `string` | Oui         | Adresse email de l'utilisateur.               |
+| Champ            | Type     | Obligatoire | Description                                         |
+|--------------    |----------|-------------|-----------------------------------------------------|
+| `token`          | `string` | Oui         | Token JWT envoyé dans le lien de réinitialisation. |
+| `password`       | `string` | Oui         | Le nouveau mot de passe à définir.                 |
+| `confirmPassword`| `string` | Oui         | Confirmation du mot de passe (doit être identique).|           
 
 
 ## ✅ Règles de validation
 
-**Email** : 
-   - Doit être une adresse email valide.
+1. **Token** : 
+   - Ne doit pas être vide.
 
+2. **Nouveau Mot de passe** :
+   - Minimum **12 caractères**.
+   - Contient au moins **une majuscule**.
+   - Contient au moins **une minuscule**.
+   - Contient au moins **un chiffre**.
+   - Contient au moins **un caractère spécial** (ex. : `@`, `#`, `!`, etc.).
 
-## 🔄 Fonctionnement
-- L'utilisateur envoie une requête contenant son adresse e-mail.
-- Si l'e-mail correspond à un utilisateur existant dans la base de données :
-- Un token temporaire est généré.
-- Un e-mail contenant le lien de réinitialisation est envoyé.
-- Le lien inclut un token JWT valide pour 10 minutes.
-- Si l'e-mail n'est pas trouvé, une réponse indiquant que l'utilisateur n'existe pas est renvoyée.
+3. **Confirmation du mot de passe** : 
+   - Ne doit pas être vide.
+   - Doit être identique au champ password
 
 
 ## 📤 Exemple de requête
 
 ### **Requête `POST` :**
 
-**URL** : `http://localhost:3001/api/auth/password-reset-request`  
+**URL** : `http://localhost:3001/api/auth/reset-password`  
 
 **Corps (Body) JSON** :
 
 ```json
 {
-  "email": "user@example.com",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "password": "MonNouveauMotDePasse@123",
+  "confirmPassword": "MonNouveauMotDePasse@123"
 }
 
 
-## 📥 Réponses possibles
+📥 Réponses possibles
 
-1. ✅ Connexion réussie
+1. ✅ Changement de mot de passe réussi
 Statut HTTP : 200 OK
 
 Corps de la réponse :
-{ "message": "Un email de réinitialisation a été envoyé." }
+{
+  "message": "Votre mot de passe a été réinitialisé avec succès."
+}
 
 
 2. ❌ Validation des données échouée
 Statut HTTP : 400 Bad Request
 
-Corps de la réponse :
+{
+  "message": "Les mots de passe ne correspondent pas."
+}
+
+ou
+
 {
   "errors": [
-    { "msg": "L'adresse email est invalide.", "param": "email" }
+    { "msg": "Le mot de passe doit contenir au moins 12 caractères." },
+    { "msg": "Le mot de passe doit contenir au moins une majuscule." }
   ]
 }
 
 
-3. ⚠️ Utilisateur non trouvé
+3. ❌ Token invalide ou expiré
+Statut HTTP : 403 Forbidden
+
+
+Corps de la réponse 
+{
+  "message": "Token invalide ou expiré."
+}
+
+
+4. ⚠️ Utilisateur non trouvé
 Statut HTTP : 404 Not Found
 
 Corps de la réponse :
@@ -77,7 +102,7 @@ Corps de la réponse :
 }
 
 
-4. 🛑 Erreur interne du serveur
+5. 🛑 Erreur interne du serveur
 Statut HTTP : 500 Internal Server Error
 
 Corps de la réponse 
@@ -86,7 +111,6 @@ Corps de la réponse
 }
 
 
-## 🔒 Notes de sécurité
-Si l'adresse e-mail fournie ne correspond à aucun utilisateur, la réponse 404 Not Found sera renvoyée pour éviter toute fuite d'informations sur les utilisateurs existants.
-Le lien de réinitialisation expire au bout de 10 minutes pour des raisons de sécurité.
-Le lien de réinitialisation renvoie vers le front-end de l'application pour permettre à l'utilisateur de saisir un nouveau mot de passe.
+🔒 Notes de sécurité
+Le token JWT envoyé dans l'email de réinitialisation expire après 10 à 15 minutes.
+Les mots de passe sont hachés avec bcrypt avant d'être stockés dans la base de données.
