@@ -76,7 +76,7 @@ class Utilisateur {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         // Mettre à jour le mot de passe da ns la base de données
-        await db.query('UPDATE utilisateurs SET password = $1 WHERE id = $2', [hashedPassword], this._id);
+        await db.query('UPDATE utilisateurs SET password = $1 WHERE id = $2', [hashedPassword, this._id]);
 
         // Mettre à jour le mot de passe dans l'objet actuel
         this._password = hashedPassword;
