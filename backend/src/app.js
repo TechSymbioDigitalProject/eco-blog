@@ -6,6 +6,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const csrf = require('csurf');
 const authRoutes = require('./routes/authRoutes');
 
 // Création de l'application express
@@ -27,6 +28,15 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Middleware pour parser les cookies
 app.use(cookieParser());
+
+// Activer la protection CSRF avec un cookie
+const csrfProtection = csrf({ cookie: true });
+app.use(csrfProtection);
+
+// Route pour envoyer le token CSRF au front-end
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+})
 
 // Routes d'authentification
 app.use('/api/auth', authRoutes);
