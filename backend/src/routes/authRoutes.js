@@ -27,10 +27,21 @@ const validateLogin = [
     .withMessage('Le mot de passe doit contenir au moins un caractère spécial.'),
 ];
 
+// Définir les règles de validation pour la réinitialisation du mot de passe
+const validatePasswordResetRequest = [
+  body('email')
+    .isEmail()
+    .withMessage('L\'adresse email est invalide.'),
+];
+
+
 // Route de connexion avec validation des données
 router.post('/login', validateLogin, authController.login);
 
 // Route de déconnexion (protégée)
 router.post('/logout', authMiddleware, authController.logout);
+
+// Route pour la demande de réinitialisation du mot de passe
+router.post('/password-reset-request', validatePasswordResetRequest, authController.requestPasswordReset);
 
 module.exports = router;
