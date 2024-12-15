@@ -20,6 +20,11 @@ Le token JWT doit être présent dans le cookie nommé track.
 - L'utilisateur doit être **authentifié** (token JWT valide présent dans le cookie nommé `track`).
 
 
+## 🔒 Sécurité CSRF
+Pour protéger cette route contre les attaques CSRF, l'en-tête X-CSRF-Token doit être inclus dans la requête avec un token CSRF valide.
+Le token CSRF peut être obtenu via la route GET /api/csrf-token.
+
+
 ## ✅ Réponse attendue
 
 1. ✅ Connexion réussie

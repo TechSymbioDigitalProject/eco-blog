@@ -40,6 +40,12 @@ Le corps de la requête doit contenir un **objet JSON** avec les champs suivants
 
 ---
 
+
+## 🔒 Sécurité CSRF
+Pour protéger cette route contre les attaques CSRF, l'en-tête X-CSRF-Token doit être inclus dans la requête avec un token CSRF valide.
+Le token CSRF peut être obtenu via la route GET /api/csrf-token.
+
+
 ## 📤 Exemple de requête
 
 ### **Requête `POST` :**

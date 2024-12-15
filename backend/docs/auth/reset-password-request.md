@@ -25,6 +25,11 @@ Le corps de la requête doit contenir un objet JSON avec les champs suivants :
    - Doit être une adresse email valide.
 
 
+## 🔒 Sécurité CSRF
+Pour protéger cette route contre les attaques CSRF, l'en-tête X-CSRF-Token doit être inclus dans la requête avec un token CSRF valide.
+Le token CSRF peut être obtenu via la route GET /api/csrf-token.
+
+
 ## 🔄 Fonctionnement
 - L'utilisateur envoie une requête contenant son adresse e-mail.
 - Si l'e-mail correspond à un utilisateur existant dans la base de données :
