@@ -124,8 +124,58 @@ async function requestPasswordReset(req, res) {
 }
 
 
+// Méthode pour la réinitialisation du mot de passe utilisateur
+async function resetPassword(req, res) {
+  // Validation des données de la requête
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const { token, password, confirmPassword } = req.body;
+
+    // V"rifier si les mots de passe sont identiques
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: 'Les mots de passe ne correspondent pas.'});
+    }
+
+    // V"rifier et décoder le token
+    const decoded = authService.verifyPasswordResetToken(token);
+    if (!decoded) {
+      logger.warn('Tentative de réinitialisation avec un token invalide ou expiré.', { token });
+      return res.status(400).json({ message: 'Token invalide ou expiré'});
+    }
+
+    // Recherche de l'utilisateur par ID
+    const utilisateur = await Utilisateur.findById(decoded.id);
+    if (!utilisateur) {
+      logger.warn('Utilisateur introuvable pour la réinitialisation du mot de passe.', { userId: decoded.id });
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    // Mettre à jour le mot de passe
+    await utilisateur.updatePassword(password);
+
+    // Journaliser et envoyé la réponse
+    logger.info('Mot de passe réinitialisé avec succès.', { userId: utilisateur.id });
+    res.status(200).json({ message: 'Votre mot de passe à été réinitialisé avec succès.' })
+
+  } catch (err) {
+    // Journaliser les erreurs
+    logger.error('Erreur lors de la réinitialisation du mot de passe.', {
+      error: err.message,
+      stack: err.stack,
+    });
+
+    res.status(500).json({ message: 'Une erreur est survenue, veuillez réessayer plus tard.' });
+  }
+}
+
+
 module.exports = {
   login,
   logout,
   requestPasswordReset,
+  resetPassword,
 };
