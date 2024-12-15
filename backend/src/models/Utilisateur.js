@@ -69,6 +69,35 @@ class Utilisateur {
     }
 
 
+    // Méthod epour mettre à jour le mot de passe
+    async updatePassword(newPassword) {
+      try {
+        // Hacher le nouveau mot de passe
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Mettre à jour le mot de passe da ns la base de données
+        await db.query('UPDATE utilisateurs SET password = $1 WHERE id = $2', [hashedPassword], this._id);
+
+        // Mettre à jour le mot de passe dans l'objet actuel
+        this._password = hashedPassword;
+
+        // Journaliser la mise à jour réussie
+        logger.info('Mot de passe mis à jour avec succès', { userId: this._id });
+
+      } catch (err) {
+        // Journaliser l'erreur
+        logger.error('Erreur lors de la mise à jour du mot de passe', {
+          error: err.message,
+          stack: err.stack,
+          userId: this._id,
+        });
+
+        // Relancer une erreur géré par le controller
+        throw new Error('Une erreur est survenue lors de la mise à jour du mot de passe.')
+      }
+    }
+
+
     // Méthode statique pour trouver un utilisateur par email
     static async findByEmail(email) {
         try {
