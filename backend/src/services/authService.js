@@ -5,6 +5,10 @@ const logger = require('../config/logger');
 // Récupération de la clé secrète JWT
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// Clé secrète pour le token de réinitialisation
+const JWT_SECRET_RESET = process.env.JWT_SECRET_RESET;
+
+
 /**
  * Génère un token JWT pour l'utilisateur donné.
  * @param {Object} utilisateur - L'objet utilisateur.
@@ -83,10 +87,56 @@ function setAuthCookie(utilisateur, res) {
   }
 }
 
+
+/**
+ * Génère un token de réinitialisation de mot de passe.
+ * @param {Object} utilisateur - L'objet utilisateur contenant l'id et l'email.
+ * @returns {string} - Le token JWT valide pendant 10 minutes.
+ */
+function generatePasswordResetToken(utilisateur) {
+  const payload = {
+    id: utilisateur.id,
+    email: utilisateur.email,
+  };
+
+  try {
+    // Générer le token avec expiration de 10 minutes
+    return jwt.sign(payload, JWT_SECRET_RESET, { expiresIn: '10m' });
+  } catch (error) {
+    logger.error('Erreur lors de la génération du token de réinitialisation.', {
+      error: error.message,
+      stack: error.stack,
+    });
+    throw new Error('Impossible de générer le token de réinitialisation.');
+  }
+}
+
+
+/**
+ * Vérifie et décode le token de réinitialisation de mot de passe.
+ * @param {string} token - Le token JWT à vérifier.
+ * @returns {Object|null} - Retourne le payload décodé si le token est valide, sinon null.
+ */
+function verifyPasswordResetToken(token) {
+  try {
+    return jwt.verify(token, JWT_SECRET_RESET);
+  } catch (error) {
+    logger.error('Erreur lors de la vérification du token de réinitialisation.', {
+      error: error.message,
+      stack: error.stack,
+    });
+    return null;
+  }
+}
+
+
+
 module.exports = {
   generateToken,
   verifyToken,
   setAuthCookie,
+  generatePasswordResetToken,
+  verifyPasswordResetToken,
 };
 
 
