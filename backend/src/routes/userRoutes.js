@@ -48,5 +48,8 @@ router.post('/create', authMiddleware, isAdmin, validateCreateUser, userControll
 // Route pour récupérer la liste de tous les utilisateurs
 router.get('/', authMiddleware, isAdmin, userController.getAllUsers);
 
+// Route pour supprimer un utilisateur
+router.delete('/:id', authMiddleware, isAdmin, userController.deleteUser);
+
 
 module.exports = router;
