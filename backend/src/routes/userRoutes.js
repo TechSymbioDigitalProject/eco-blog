@@ -41,6 +41,16 @@ const validateCreateUser = [
     .withMessage('L\'ID du rôle doit être un nombre entier.'),
 ];
 
+// Validation pour la mise a jour du rôle 
+const validateUpdateUserRole = [
+  // Validation pour roleId : doit être un nombre entier positif
+  body('roleId')
+    .notEmpty()
+    .withMessage('Le rôle est obligatoire.')
+    .isInt({ min: 1 })
+    .withMessage('L\'ID du rôle doit être un nombre entier valide.'),
+];
+
 
 // Route pour la création d'un nouvel utilisateur
 router.post('/create', authMiddleware, isAdmin, validateCreateUser, userController.createUser);
@@ -50,6 +60,9 @@ router.get('/', authMiddleware, isAdmin, userController.getAllUsers);
 
 // Route pour supprimer un utilisateur
 router.delete('/:id', authMiddleware, isAdmin, userController.deleteUser);
+
+// Route pour mettre à jour le rôle utilisateur
+router.put('/:id/update-role', authMiddleware, isAdmin, validateUpdateUserRole, userController.updateUserRole);
 
 
 module.exports = router;
