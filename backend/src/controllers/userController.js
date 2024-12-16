@@ -72,38 +72,27 @@ async function createUser(req, res) {
 // Méthode pour récupérer la liste des utilisateurs
 async function getAllUsers(req, res) {
   try {
-    // Appeler la méthode findAll pour récupérer les utilisateurs
+    // Récupérer tous les utilisateurs avec leur rôle
     const utilisateurs = await Utilisateur.findAll();
 
-    // Journaliser le succès de l'opération
-    logger.info('Liste des utilisateurs récupérée avec succès.', {
-      totalUsers: utilisateurs.length,
-      url: req.originalUrl,
-      ip: req.ip,
-    });
+    // Reformater pour le front-end
+    const utilisateursFormattes = utilisateurs.map(user => ({
+      id: user.id,
+      nomComplet: `${user.prenom} ${user.nom}`,
+      email: user.email,
+      role: user.role || 'Rôle inconnu', // Gérer les cas où le rôle n'est pas trouvé
+    }));
 
-    // Retourner la liste des utilisateurs en réponse
     res.status(200).json({
       message: 'Liste des utilisateurs récupérée avec succès.',
-      utilisateurs: utilisateurs.map(user => ({
-        id: user.id,
-        nom: user.nom,
-        prenom: user.prenom,
-        email: user.email,
-        roleId: user.roleId,
-      })),
+      utilisateurs: utilisateursFormattes,
     });
-
   } catch (err) {
-    // Journaliser l'erreur
-    logger.error('Erreur lors de la récupération de la liste des utilisateurs.', {
+    logger.error('Erreur lors de la récupération des utilisateurs.', {
       error: err.message,
       stack: err.stack,
-      url: req.originalUrl,
-      ip: req.ip,
     });
 
-    // Retourner une réponse d'erreur
     res.status(500).json({
       message: 'Une erreur est survenue lors de la récupération des utilisateurs.',
     });
