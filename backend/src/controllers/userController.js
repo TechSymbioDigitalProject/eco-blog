@@ -170,7 +170,7 @@ async function updateUserRole(req, res) {
     }
 
     // Mettre à jour le rôle de l'utilisateur
-    await utilisateur.updateRole(roleId);
+    await Utilisateur.updateRole(utilisateur.id, roleId);
 
     // Journaliser l'opération
     logger.info('Rôle de l\'utilisateur mis à jour avec succès.', {
