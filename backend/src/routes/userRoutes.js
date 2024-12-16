@@ -43,7 +43,7 @@ const validateCreateUser = [
 
 
 // Route pour la création d'un nouvel utilisateur
-router.post('create-user', authMiddleware, isAdmin, validateCreateUser, userController.createUser);
+router.post('/create', authMiddleware, isAdmin, validateCreateUser, userController.createUser);
 
 
 module.exports = router;
