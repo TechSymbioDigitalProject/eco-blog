@@ -45,5 +45,8 @@ const validateCreateUser = [
 // Route pour la création d'un nouvel utilisateur
 router.post('/create', authMiddleware, isAdmin, validateCreateUser, userController.createUser);
 
+// Route pour récupérer la liste de tous les utilisateurs
+router.get('/', authMiddleware, isAdmin, userController.getAllUsers);
+
 
 module.exports = router;

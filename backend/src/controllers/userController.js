@@ -6,6 +6,7 @@ const passwordService = require('../services/passwordService');
 const emailService = require('../services/emailService');
 
 
+// Méthode pour créer un utilisateur
 async function createUser(req, res) {
   // Valider les données de la requête
   const errors = validationResult(req);
@@ -67,6 +68,39 @@ async function createUser(req, res) {
   }
 }
 
+
+// Méthode pour récupérer la liste des utilisateurs
+async function getAllUsers(req, res) {
+  try {
+    // Récupérer tous les utilisateurs avec leur rôle
+    const utilisateurs = await Utilisateur.findAll();
+
+    // Reformater pour le front-end
+    const utilisateursFormattes = utilisateurs.map(user => ({
+      id: user.id,
+      nomComplet: `${user.prenom} ${user.nom}`,
+      email: user.email,
+      role: user.role || 'Rôle inconnu', // Gérer les cas où le rôle n'est pas trouvé
+    }));
+
+    res.status(200).json({
+      message: 'Liste des utilisateurs récupérée avec succès.',
+      utilisateurs: utilisateursFormattes,
+    });
+  } catch (err) {
+    logger.error('Erreur lors de la récupération des utilisateurs.', {
+      error: err.message,
+      stack: err.stack,
+    });
+
+    res.status(500).json({
+      message: 'Une erreur est survenue lors de la récupération des utilisateurs.',
+    });
+  }
+}
+
+
 module.exports = {
   createUser,
+  getAllUsers,
 };

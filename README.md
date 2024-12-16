@@ -30,6 +30,7 @@
 
 ### Utilisateur
 - [Création d'un utilisateur](./backend/docs/user/create-user.md),
+- [Récupérer les utilisateurs](./backend/docs/user/get-all-users.md),
 
 
 ### Sécurité

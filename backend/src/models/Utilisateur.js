@@ -155,6 +155,28 @@ class Utilisateur {
       }
     }
 
+
+  // Méthode pour récupérer la liste des utilisateurs
+  static async findAll() {
+    try {
+      const query = `
+        SELECT u.id, u.nom, u.prenom, u.email, r.role AS role
+        FROM utilisateurs u
+        LEFT JOIN roles r ON u.role_id = r.id
+      `;
+
+      const result = await db.query(query);
+
+      return result.rows; // Retourner directement les résultats
+    } catch (err) {
+      logger.error('Erreur lors de la récupération des utilisateurs avec rôles.', {
+        error: err.message,
+        stack: err.stack,
+      });
+      throw new Error('Erreur lors de la récupération des utilisateurs.');
+    }
+  }
+
   
   // Méthode static pour créer un nouvel utilisateur
   static async create({ nom, prenom, email, password, roleId }) {
