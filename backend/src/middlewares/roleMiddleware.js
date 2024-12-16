@@ -11,8 +11,9 @@ const logger = require('../config/logger');
 
 async function isAdmin(req, res, next) {
   try {
-    // Vérifie si req.user existe et si le rôle est "admin"
-    if (req.user && req.user.roleId === 'administrateur') {
+    console.log('req.user:', req.user);
+    // Vérifie si req.user existe 
+    if (!req.user || !req.user.roleId) {
       logger.warn('Accès refusé: Aucun rôle trouvé dans le token', {
         userId: req.user ? req.user.id : null,
         url: req.originalUrl,
@@ -24,13 +25,13 @@ async function isAdmin(req, res, next) {
 
     // Récupère le nom du rôle depuis la base de données
     const role = await Role.findById(req.user.roleId);
-
+    console.log('Rôle récupéré depuis la base de données :', role);
     // Vérifie que le rôle est "administrateur"
-    if (!role || role.nom !== 'administrateur') {
+    if (!role || role._role !== 'administrateur') {
       logger.warn('Accès refusé: Rôle non autorisé', {
         userId: req.user.id,
         roleId: req.user.roleId,
-        roleName: role ? role.nom : 'Inconnu',
+        roleName: role ? role.role : 'Inconnu',
         url: req.originalUrl,
         ip: req.ip,
       });
@@ -41,7 +42,7 @@ async function isAdmin(req, res, next) {
     // Journaliser l'accès autorisé
     logger.info('Accès autorisé pour un administrateur.', {
       userId: req.user.id,
-      roleName: role.nom,
+      roleName: role._role,
       url: req.originalUrl,
       ip: req.ip,
     });
