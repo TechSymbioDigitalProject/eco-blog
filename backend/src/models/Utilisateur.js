@@ -236,6 +236,23 @@ class Utilisateur {
       throw new Error('Erreur lors de la mise à jour du rôle.');
     }
   }
+
+
+  // Méthode pout compter le nomdre d'administrateur dans la base de données
+  static async countAdmins() {
+    try {
+      const result = await db.query(
+        'SELECT COUNT(*) FROM utilisateurs WHERE role_id = 1'
+      );
+  
+      return parseInt(result.rows[0].count);
+    } catch (err) {
+      logger.error('Erreur lors du comptage des administrateurs.', {
+        error: err.message,
+      });
+      throw new Error('Impossible de compter les administrateurs.');
+    }
+  }
   
 }
 
