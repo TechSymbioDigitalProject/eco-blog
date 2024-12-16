@@ -8,6 +8,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const csrf = require('csurf');
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 // Création de l'application express
 const app = express();
@@ -40,6 +41,9 @@ app.get('/api/csrf-token', (req, res) => {
 
 // Routes d'authentification
 app.use('/api/auth', authRoutes);
+
+// Routes Utilisateur
+app.use('/api/users', userRoutes);
 
 // Route de bienvenue
 // Vérifier que le serveur fonctionne correctement
