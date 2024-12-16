@@ -69,7 +69,7 @@ class Utilisateur {
     }
 
 
-    // Méthod epour mettre à jour le mot de passe
+    // Méthode pour mettre à jour le mot de passe
     async updatePassword(newPassword) {
       try {
         // Hacher le nouveau mot de passe
@@ -210,6 +210,30 @@ class Utilisateur {
         userId,
       });
       throw new Error('Erreur lors de la suppression de l\'utilisateur.');
+    }
+  }
+
+
+  // Méthode static pour mettre à jour le rôle utilisateur
+  static async updateRole(userId, newRoleId) {
+    try {
+      const result = await db.query(
+        'UPDATE utilisateurs SET role_id = $1 WHERE id = $2 RETURNING id, role_id',
+        [newRoleId, userId]
+      );
+  
+      if (result.rows.length > 0) {
+        return result.rows[0]; // Retourner les données mises à jour
+      }
+  
+      throw new Error('La mise à jour du rôle a échoué.');
+    } catch (err) {
+      logger.error('Erreur lors de la mise à jour du rôle utilisateur.', {
+        error: err.message,
+        userId,
+        newRoleId,
+      });
+      throw new Error('Erreur lors de la mise à jour du rôle.');
     }
   }
   
