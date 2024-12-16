@@ -28,5 +28,9 @@
 - [Changement du mot de passe](./backend//docs/auth/reset-password.md)
 
 
+### Utilisateur
+- [Création d'un utilisateur](./backend/docs/user/create-user.md),
+
+
 ### Sécurité
 - [Protection CSRF](./backend/docs/securite/csrf-token.md),
