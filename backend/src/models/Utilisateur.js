@@ -156,7 +156,7 @@ class Utilisateur {
     }
 
 
-  // Méthode pour récupérer la liste des utilisateurs
+  // Méthode static pour récupérer la liste des utilisateurs
   static async findAll() {
     try {
       const query = `
@@ -197,6 +197,22 @@ class Utilisateur {
     }
   }
 
+
+  // Méthode static pour supprimer un utilisateur
+  static async deleteById(userId) {
+    try {
+      const result = await db.query('DELETE FROM utilisateurs WHERE id = $1 RETURNING *', [userId]);
+      return result.rowCount > 0; // Retourne true si une ligne a été supprimée
+    } catch (err) {
+      logger.error('Erreur lors de la suppression de l\'utilisateur', {
+        error: err.message,
+        stack: err.stack,
+        userId,
+      });
+      throw new Error('Erreur lors de la suppression de l\'utilisateur.');
+    }
+  }
+  
 }
 
 module.exports = Utilisateur;
