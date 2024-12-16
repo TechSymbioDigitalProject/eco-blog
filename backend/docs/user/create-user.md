@@ -134,7 +134,6 @@ Retour de la réponse : Retourne les informations de l'utilisateur créé (sans 
 12 caractères minimum, avec majuscules, minuscules, chiffres, et caractères spéciaux.
 
 - Le mot de passe provisoire est envoyé par email mais n'est jamais renvoyé dans la réponse de l'API.
-
  - L'API est protégée par :
        Le middleware JWT pour vérifier l'authentification.
        Le middleware CSRF pour les attaques CSRF.

@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
 const Utilisateur = require('../models/Utilisateur');
+const Role = require('../models/Role');
 const logger = require('../config/logger');
 const passwordService = require('../services/passwordService');
 const emailService = require('../services/emailService');
@@ -100,7 +101,40 @@ async function getAllUsers(req, res) {
 }
 
 
+// Méthode pour supprimer un utilisateur
+async function deleteUser(req, res) {
+  try {
+    const { id } = req.params;
+
+    // Vérifier si l'utilisateur existe
+    const utilisateur = await Utilisateur.findById(id);
+    if (!utilisateur) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    // Vérifier le rôle de l'utilisateur
+    const role = await Role.findById(utilisateur.roleId);
+    if (role.nom === 'administrateur') {
+      return res.status(403).json({ message: 'Impossible de supprimer un administrateur.' });
+    }
+
+    // Supprimer l'utilisateur
+    const deleted = await Utilisateur.deleteById(id);
+    if (deleted) {
+      logger.info(`Utilisateur supprimé : ${id}`);
+      return res.status(200).json({ message: 'Utilisateur supprimé avec succès.' });
+    }
+
+    res.status(500).json({ message: 'Échec de la suppression de l\'utilisateur.' });
+  } catch (err) {
+    logger.error('Erreur lors de la suppression de l\'utilisateur', { error: err.message });
+    res.status(500).json({ message: 'Une erreur est survenue.' });
+  }
+}
+
+
 module.exports = {
   createUser,
   getAllUsers,
+  deleteUser
 };
