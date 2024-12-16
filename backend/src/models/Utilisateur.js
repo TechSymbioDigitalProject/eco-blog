@@ -155,6 +155,30 @@ class Utilisateur {
       }
     }
 
+
+  // Méthode pour récupérer la liste des utilisateurs
+  static async findAll() {
+    try {
+      // Exécuter la requête pour récupérer tous les utilisateurs
+      const result = await db.query('SELECT * FROM utilisateurs');
+
+      // Mapper chaque ligne de résultat pour créer des instances d'Utilisateur
+      return result.rows.map(
+        row => new Utilisateur(row.id, row.nom, row.prenom, row.email, row.password, row.role_id)
+      );
+
+    } catch (err) {
+      // Journaliser l'erreur
+      logger.error('Erreur lors de la récupération de tous les utilisateurs.', {
+        error: err.message,
+        stack: err.stack,
+      });
+
+      // Relancer une erreur générique pour le contrôleur
+      throw new Error('Erreur lors de la récupération des utilisateurs.');
+    }
+  }
+
   
   // Méthode static pour créer un nouvel utilisateur
   static async create({ nom, prenom, email, password, roleId }) {
