@@ -52,6 +52,41 @@ async function sendPasswordResetEmail(to, resetToken) {
 }
 
 
+/**
+ * Envoie un email contenant le mot de passe provisoire.
+ * @param {string} to - Adresse email du destinataire.
+ * @param {string} password - Le mot de passe provisoire.
+ */
+
+async function sendNewUserEmail(to, password) {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to,
+    subject: 'Votre compte a été créé',
+    text: `Votre compte a été créé avec succès.\n\nVoici votre mot de passe provisoire : ${password}\n\nVeuillez le changer dès votre première connexion.`,
+    html: `
+      <p>Votre compte a été créé avec succès.</p>
+      <p><strong>Mot de passe provisoire :</strong> ${password}</p>
+      <p>Veuillez le changer dès votre première connexion.</p>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    logger.info('Email envoyé avec succès pour le nouvel utilisateur.', { to });
+
+  } catch (err) {
+    logger.error('Erreur lors de l\'envoi du mail pour le nouvel utilisateur', {
+      error: err.message,
+      to,
+    });
+
+    throw new Error('Impossible d\'envoyer le mail de confirmation.');
+  }
+}
+
+
 module.exports = {
   sendPasswordResetEmail,
+  sendNewUserEmail,
 };
