@@ -21,7 +21,7 @@ function generateToken(utilisateur) {
       id: utilisateur.id,
       nom: utilisateur.nom,
       prenom: utilisateur.prenom,
-      role: utilisateur.roleId,
+      roleId: utilisateur.roleId,
     };
 
     // Génération du token avec expiration (1h ici)
