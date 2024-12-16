@@ -3,9 +3,9 @@ const logger = require('../config/logger');
 
 
 class Role {
-  constructor (id, nom) {
+  constructor (id, role) {
     this._id = id;
-    this._nom = nom;
+    this._role = role;
   }
 
   // Getters
@@ -14,7 +14,7 @@ class Role {
   }
 
   get nom() {
-    return this._nom;
+    return this._role;
   }
 
   
@@ -24,8 +24,8 @@ class Role {
       const result = await db.query('SELECT * FROM roles WHERE id = $1', [roleId]);
 
       if(result.rows.length > 0) {
-        const { id, nom } = result.rows[0];
-        return new Role(id, nom);
+        const { id, role } = result.rows[0];
+        return new Role(id, role);
       }
 
       return null;
