@@ -155,6 +155,26 @@ class Utilisateur {
       }
     }
 
+  
+  // Méthode static pour créer un nouvel utilisateur
+  static async create({ nom, prenom, email, password, roleId }) {
+    try {
+      // Exécuter la requête pour céer un nouvel utilisateur
+      const result = await db.query('INSERT INTO utilisateurs (nom, prenom, email, password, role_id) VALUES ($1, $2, $3, $4, $5) RETURNING *', [nom, prenom, email, password, roleId]);
+
+      const { id } = result.rows[0];
+      return new Utilisateur(id, nom, prenom, email, password, roleId);
+
+    } catch(err) {
+      logger.error('Erreur lors de la création de l\'utilisateur', {
+        error: err.message,
+        stack: err.stack,
+      });
+
+      throw new Error('Erreur lors de la création de l\'utilisateur');
+    }
+  }
+
 }
 
 module.exports = Utilisateur;
