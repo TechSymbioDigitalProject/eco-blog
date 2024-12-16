@@ -159,22 +159,20 @@ class Utilisateur {
   // Méthode pour récupérer la liste des utilisateurs
   static async findAll() {
     try {
-      // Exécuter la requête pour récupérer tous les utilisateurs
-      const result = await db.query('SELECT * FROM utilisateurs');
+      const query = `
+        SELECT u.id, u.nom, u.prenom, u.email, r.role AS role
+        FROM utilisateurs u
+        LEFT JOIN roles r ON u.role_id = r.id
+      `;
 
-      // Mapper chaque ligne de résultat pour créer des instances d'Utilisateur
-      return result.rows.map(
-        row => new Utilisateur(row.id, row.nom, row.prenom, row.email, row.password, row.role_id)
-      );
+      const result = await db.query(query);
 
+      return result.rows; // Retourner directement les résultats
     } catch (err) {
-      // Journaliser l'erreur
-      logger.error('Erreur lors de la récupération de tous les utilisateurs.', {
+      logger.error('Erreur lors de la récupération des utilisateurs avec rôles.', {
         error: err.message,
         stack: err.stack,
       });
-
-      // Relancer une erreur générique pour le contrôleur
       throw new Error('Erreur lors de la récupération des utilisateurs.');
     }
   }
