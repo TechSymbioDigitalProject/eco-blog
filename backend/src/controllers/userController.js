@@ -133,8 +133,80 @@ async function deleteUser(req, res) {
 }
 
 
+// Méthode pour mettre à jour le rôle d'un utilisateur
+async function updateUserRole(req, res) {
+  // Vérifier les erreurs de validation
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const { id } = req.params; // ID de l'utilisateur à modifier
+    const { roleId } = req.body; // Nouveau rôle à assigner
+
+    // Récupérer l'utilisateur ciblé
+    const utilisateur = await Utilisateur.findById(id);
+
+    if (!utilisateur) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    // Empêcher un administrateur de se rétrograder lui-même
+    if (req.user.id === utilisateur.id && roleId !== 1) {
+      return res.status(403).json({
+        message: 'Vous ne pouvez pas modifier votre propre rôle.',
+      });
+    }
+
+    // Vérifier qu'on ne rétrograde pas le dernier administrateur
+    if (utilisateur.roleId === 1 && roleId !== 1) {
+      const adminCount = await Utilisateur.countAdmins();
+      if (adminCount <= 1) {
+        return res.status(403).json({
+          message: 'Impossible de rétrograder le dernier administrateur.',
+        });
+      }
+    }
+
+    // Mettre à jour le rôle de l'utilisateur
+    await Utilisateur.updateRole(utilisateur.id, roleId);
+
+    // Journaliser l'opération
+    logger.info('Rôle de l\'utilisateur mis à jour avec succès.', {
+      userId: utilisateur.id,
+      newRoleId: roleId,
+      updatedBy: req.user.id,
+    });
+
+    // Retourner une réponse de succès
+    res.status(200).json({
+      message: 'Rôle de l\'utilisateur mis à jour avec succès.',
+      utilisateur: {
+        id: utilisateur.id,
+        nom: utilisateur.nom,
+        prenom: utilisateur.prenom,
+        roleId: roleId,
+      },
+    });
+
+  } catch (err) {
+    // En cas d'erreur, loguer les détails
+    logger.error('Erreur lors de la mise à jour du rôle de l\'utilisateur.', {
+      error: err.message,
+      stack: err.stack,
+      userId: req.user ? req.user.id : null,
+    });
+    res.status(500).json({
+      message: 'Une erreur est survenue lors de la mise à jour du rôle.',
+    });
+  }
+}
+
+
 module.exports = {
   createUser,
   getAllUsers,
-  deleteUser
+  deleteUser,
+  updateUserRole,
 };
