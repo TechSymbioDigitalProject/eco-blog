@@ -204,9 +204,63 @@ async function updateUserRole(req, res) {
 }
 
 
+// Méthode pour mise à jour du profile utilisateur 
+async function updateUserProfile(req, res) {
+  try {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { nom, prenom, email } = req.body;
+
+     // Vérifier que l'utilisateur est authentifié
+     if (!req.user || !req.user.id) {
+      logger.warn('Accès refusé : utilisateur non authentifié.', { ip: req.ip });
+      return res.status(401).json({ message: 'Accès non autorisé.' });
+    }
+
+    // Récupérer l'utilisateur authentifié depuis req.user
+    const utilisateurId = req.user.id;
+
+    // Récupérer les informations de l'utilisateur depuis la base de données
+    const utilisateur = await Utilisateur.findById(utilisateurId);
+
+    if (!utilisateur) {
+      logger.warn('Tentative de mise à jour d\'un utilisateur non trouvé.', { userId: utilisateurId });
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    // Mettre à jour les informations utilisateur
+    const updatedUser = await utilisateur.updateProfile({ nom, prenom, email });
+
+    logger.info('Profil utilisateur mis à jour avec succès.', { userId: utilisateurId });
+
+    return res.status(200).json({
+      message: 'Profil mis à jour avec succès.',
+      utilisateur: {
+        id: updatedUser.id,
+        nom: updatedUser.nom,
+        prenom: updatedUser.prenom,
+        email: updatedUser.email,
+      },
+    });
+  } catch (err) {
+    logger.error('Erreur lors de la mise à jour du profil utilisateur.', {
+      error: err.message,
+      stack: err.stack,
+      userId: req.user ? req.user.id : null,
+    });
+    return res.status(500).json({ message: 'Une erreur est survenue lors de la mise à jour du profil.' });
+
+  }
+}
+
+
 module.exports = {
   createUser,
   getAllUsers,
   deleteUser,
   updateUserRole,
+  updateUserProfile,
 };
