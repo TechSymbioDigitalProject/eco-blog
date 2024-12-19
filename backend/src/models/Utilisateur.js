@@ -253,6 +253,38 @@ class Utilisateur {
       throw new Error('Impossible de compter les administrateurs.');
     }
   }
+
+
+  // Méthode pour mettre à jour le profile utilisateur
+  async updateProfile(updates) {
+    const { nom, prenom, email } = updates;
+
+    try  {
+      const result = await db.query( 'UPDATE utilisateurs SET nom = $1, prenom = $2, email = $3 WHERE id = $4 RETURNING id, nom, prenom, email, role_id', [npm, prenom, email, this._id]);
+
+      if(result.rows.length > 0) {
+        const { id, nom, prenom, email, role_id } = result.rows[0];
+        logeger.info('Profile utilisateur mos à jour avec succès.', { userId: id });
+
+        this._nom = nom;
+        this._prenom = prenom;
+        this._email = email;
+
+        return new Utilisateur(id, nom, prenom, email, null, role_id);
+      } else {
+        throw new Error('Aucun utilisateur mis à jour.');
+      }
+
+    } catch (err) {
+
+      logger.error('Erreur lors de la mise à jour du profil utilisateur.', {
+        error: err.message,
+        userId: this._id,
+      });
+
+      throw new Error('Erreur lors de la mise à jour du profil.');
+    }
+  }
   
 }
 
