@@ -52,6 +52,34 @@ const validateUpdateUserRole = [
 ];
 
 
+// Validation pour la mise à jour du profile utilisateur
+const validateUpdateProfile = [
+  // Validation du nom : Optionnel mais doit respecter le format
+  body('nom')
+    .optional()
+    .matches(/^[A-Za-zÀ-ÖØ-öø-ÿ\s\-']+$/)
+    .withMessage('Le nom ne peut contenir que des lettres, accents, espaces, tirets et apostrophes.')
+    .isLength({ max: 50 })
+    .withMessage('Le nom ne doit pas dépasser 50 caractères.'),
+
+  // Validation du prénom : Optionnel mais doit respecter le format
+  body('prenom')
+    .optional()
+    .matches(/^[A-Za-zÀ-ÖØ-öø-ÿ\s\-']+$/)
+    .withMessage('Le prénom ne peut contenir que des lettres, accents, espaces, tirets et apostrophes.')
+    .isLength({ max: 50 })
+    .withMessage('Le prénom ne doit pas dépasser 50 caractères.'),
+
+  // Validation de l'email : Optionnel mais doit être un email valide
+  body('email')
+    .optional()
+    .isEmail()
+    .withMessage('L\'adresse email est invalide.'),
+];
+
+
+
+
 // Route pour la création d'un nouvel utilisateur
 router.post('/create', authMiddleware, isAdmin, validateCreateUser, userController.createUser);
 
@@ -63,6 +91,9 @@ router.delete('/:id', authMiddleware, isAdmin, userController.deleteUser);
 
 // Route pour mettre à jour le rôle utilisateur
 router.put('/:id/update-role', authMiddleware, isAdmin, validateUpdateUserRole, userController.updateUserRole);
+
+// Route pour la mise à jour du profil utilisateur
+router.put('/update-profile/:id', authMiddleware, validateUpdateProfile, userController.updateUserProfile);
 
 
 module.exports = router;
