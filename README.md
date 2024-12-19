@@ -33,6 +33,7 @@
 - [Récupérer les utilisateurs](./backend/docs/user/get-all-users.md),
 - [Supprimer un utilisateur](./backend/docs/user/delete-user.md),
 - [Mise à jour du rôle utilisateur](./backend/docs/user/update-role.md),
+- [Mise à jour du profile utilisateur](./backend/docs/user/update-profile.md),
 
 
 

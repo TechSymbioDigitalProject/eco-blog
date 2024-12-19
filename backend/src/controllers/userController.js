@@ -204,9 +204,56 @@ async function updateUserRole(req, res) {
 }
 
 
+// Méthode pour mise à jour du profile utilisateur 
+async function updateUserProfile(req, res) {
+  try {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { nom, prenom, email } = req.body;
+
+    // ID de l'utilisateur dans le token JWT (utilisateur connecté)
+    const userId = req.user.id;
+
+    // ID de l'utilisateur à mettre à jour (passé dans les paramètres de la requête)
+    const { id } = req.params;
+
+    // Vérifier que l'utilisateur met à jour son propre profil
+    if (parseInt(id) !== req.user.id) {
+      return res.status(403).json({
+        message: "Vous n'avez pas l'autorisation de mettre à jour ce profil.",
+      });
+    }
+
+    const utilisateur = await Utilisateur.findById(id);
+    if (!utilisateur) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    // Envoyer uniquement les champs présents dans le body
+    const updatedUser = await utilisateur.updateProfile(req.body);
+
+    res.status(200).json({
+      message: 'Profil mis à jour avec succès.',
+      utilisateur: updatedUser,
+    });
+  } catch (err) {
+    logger.error('Erreur lors de la mise à jour du profil utilisateur.', {
+      error: err.message,
+      stack: err.stack,
+      userId: req.user.id,
+    });
+    res.status(500).json({ message: 'Une erreur est survenue lors de la mise à jour du profil.' });
+  }
+}
+
+
 module.exports = {
   createUser,
   getAllUsers,
   deleteUser,
   updateUserRole,
+  updateUserProfile,
 };
