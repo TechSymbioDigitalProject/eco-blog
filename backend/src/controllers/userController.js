@@ -214,45 +214,38 @@ async function updateUserProfile(req, res) {
 
     const { nom, prenom, email } = req.body;
 
-     // Vérifier que l'utilisateur est authentifié
-     if (!req.user || !req.user.id) {
-      logger.warn('Accès refusé : utilisateur non authentifié.', { ip: req.ip });
-      return res.status(401).json({ message: 'Accès non autorisé.' });
+    // ID de l'utilisateur dans le token JWT (utilisateur connecté)
+    const userId = req.user.id;
+
+    // ID de l'utilisateur à mettre à jour (passé dans les paramètres de la requête)
+    const { id } = req.params;
+
+    // Vérifier que l'utilisateur met à jour son propre profil
+    if (parseInt(id) !== req.user.id) {
+      return res.status(403).json({
+        message: "Vous n'avez pas l'autorisation de mettre à jour ce profil.",
+      });
     }
 
-    // Récupérer l'utilisateur authentifié depuis req.user
-    const utilisateurId = req.user.id;
-
-    // Récupérer les informations de l'utilisateur depuis la base de données
-    const utilisateur = await Utilisateur.findById(utilisateurId);
-
+    const utilisateur = await Utilisateur.findById(id);
     if (!utilisateur) {
-      logger.warn('Tentative de mise à jour d\'un utilisateur non trouvé.', { userId: utilisateurId });
       return res.status(404).json({ message: 'Utilisateur non trouvé.' });
     }
 
-    // Mettre à jour les informations utilisateur
-    const updatedUser = await utilisateur.updateProfile({ nom, prenom, email });
+    // Envoyer uniquement les champs présents dans le body
+    const updatedUser = await utilisateur.updateProfile(req.body);
 
-    logger.info('Profil utilisateur mis à jour avec succès.', { userId: utilisateurId });
-
-    return res.status(200).json({
+    res.status(200).json({
       message: 'Profil mis à jour avec succès.',
-      utilisateur: {
-        id: updatedUser.id,
-        nom: updatedUser.nom,
-        prenom: updatedUser.prenom,
-        email: updatedUser.email,
-      },
+      utilisateur: updatedUser,
     });
   } catch (err) {
     logger.error('Erreur lors de la mise à jour du profil utilisateur.', {
       error: err.message,
       stack: err.stack,
-      userId: req.user ? req.user.id : null,
+      userId: req.user.id,
     });
-    return res.status(500).json({ message: 'Une erreur est survenue lors de la mise à jour du profil.' });
-
+    res.status(500).json({ message: 'Une erreur est survenue lors de la mise à jour du profil.' });
   }
 }
 
