@@ -256,32 +256,54 @@ class Utilisateur {
 
 
   // Méthode pour mettre à jour le profile utilisateur
-  async updateProfile(updates) {
-    const { nom, prenom, email } = updates;
-
-    try  {
-      const result = await db.query( 'UPDATE utilisateurs SET nom = $1, prenom = $2, email = $3 WHERE id = $4 RETURNING id, nom, prenom, email, role_id', [npm, prenom, email, this._id]);
-
-      if(result.rows.length > 0) {
-        const { id, nom, prenom, email, role_id } = result.rows[0];
-        logeger.info('Profile utilisateur mos à jour avec succès.', { userId: id });
-
-        this._nom = nom;
-        this._prenom = prenom;
-        this._email = email;
-
-        return new Utilisateur(id, nom, prenom, email, null, role_id);
-      } else {
-        throw new Error('Aucun utilisateur mis à jour.');
+  async updateProfile(data) {
+    try {
+      const fields = [];
+      const values = [];
+      let index = 1;
+  
+      // Construire dynamiquement la liste des champs et des valeurs
+      for (const key in data) {
+        if (['nom', 'prenom', 'email'].includes(key) && data[key]) {
+          fields.push(`${key} = $${index}`);
+          values.push(data[key]);
+          index++;
+        }
       }
-
+  
+      // Ajouter l'ID de l'utilisateur pour la clause WHERE
+      values.push(this._id);
+  
+      if (fields.length === 0) {
+        throw new Error('Aucune donnée à mettre à jour.');
+      }
+  
+      // Construire la requête SQL finale
+      const query = `
+        UPDATE utilisateurs 
+        SET ${fields.join(', ')}
+        WHERE id = $${index}
+        RETURNING id, nom, prenom, email
+      `;
+  
+      // Exécuter la requête SQL
+      const result = await db.query(query, values);
+  
+      if (result.rows.length > 0) {
+        const { nom, prenom, email } = result.rows[0];
+        this._nom = nom || this._nom;
+        this._prenom = prenom || this._prenom;
+        this._email = email || this._email;
+  
+        return { id: this._id, nom, prenom, email };
+      }
+  
+      throw new Error('La mise à jour a échoué.');
     } catch (err) {
-
-      logger.error('Erreur lors de la mise à jour du profil utilisateur.', {
+      logger.error('Erreur lors de la mise à jour du profil.', {
         error: err.message,
         userId: this._id,
       });
-
       throw new Error('Erreur lors de la mise à jour du profil.');
     }
   }
