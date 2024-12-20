@@ -23,28 +23,8 @@ Aucune donnée n'est requise dans le corps de la requête.
 
 **URL** : http://localhost:3001/api/users
 
-**Corps (Body) JSON** :
+**Corps (Body) JSON** : Aucune donnée requise dans le corps de la requête.
 
-```json
-{
-  "message": "Liste des utilisateurs récupérée avec succès.",
-  "utilisateurs": [
-    {
-      "id": 1,
-      "nom": "Dupont",
-      "prenom": "Jean",
-      "email": "jean.dupont@example.com",
-      "role": "administrateur"
-    },
-    {
-      "id": 2,
-      "nom": "Doe",
-      "prenom": "John",
-      "email": "john.doe@example.com",
-      "role": "rédacteur"
-    }
-  ]
-}
 
 
 ## 📥 Réponses possibles
