@@ -9,7 +9,7 @@ async function getAllCategories(req, res) {
     const categories = await Categorie.findAll();
 
     // Transformer la liste en objet avec Id comme clé
-    const caterogiesMap = {};
+    const categoriesMap = {};
     categories.forEach(cat => {
       categoriesMap[cat.id] = {
         id: cat.id,
