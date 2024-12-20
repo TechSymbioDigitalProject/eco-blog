@@ -50,3 +50,6 @@ class Categorie {
     }
   }
 }
+
+
+module.exports = Categorie;
