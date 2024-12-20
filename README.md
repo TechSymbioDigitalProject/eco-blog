@@ -36,6 +36,11 @@
 - [Mise à jour du profile utilisateur](./backend/docs/user/update-profile.md),
 
 
+### Catégories
+- [Récupérer les catégories](./backend/docs/categorie/get-all-categories.md),
+
+
+
 
 ### Sécurité
 - [Protection CSRF](./backend/docs/securite/csrf-token.md),
