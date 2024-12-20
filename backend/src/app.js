@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const csrf = require('csurf');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const categorieRoutes = require('./routes/categorieRoutes');
 
 // Création de l'application express
 const app = express();
@@ -44,6 +45,9 @@ app.use('/api/auth', authRoutes);
 
 // Routes Utilisateur
 app.use('/api/users', userRoutes);
+
+// Routes pour les catégories
+app.use('/api/categories', categorieRoutes);
 
 // Route de bienvenue
 // Vérifier que le serveur fonctionne correctement
