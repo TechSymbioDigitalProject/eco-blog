@@ -1,5 +1,6 @@
 const Categorie = require('../models/Categorie');
 const logger = require('../config/logger');
+const { validationResult } = require ('express-validator');
 
 
 // Méthode pour récupérer la liste des catégories
@@ -36,6 +37,33 @@ async function getAllCategories(req, res) {
     res.status(500).json({ message: 'Une erreur est survenue lors de la récupération des catégories.'});
   }
 }
+
+async function createCategorie(req, res) {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { nom, description } = req.body;
+
+  try {
+    const nouvelleCategorie = await Categorie.create(nom, description);
+
+    logger.info('Catégorie créée avec succès.', { nom, description });
+    res.status(201).json({
+      message: 'Catégorie créée avec succès.',
+      categorie: {
+        id: nouvelleCategorie.id,
+        nom: nouvelleCategorie.nom,
+        description: nouvelleCategorie.description,
+      },
+    });
+
+  } catch (err) {
+    logger.error('Erreur lors de la création de la catégorie.', { error: err.message });
+    res.status(500).json({ message: 'Une erreur est survenue lors de la création de la catégorie.'});
+  }
+};
 
 
 module.exports = {
