@@ -49,6 +49,23 @@ class Categorie {
       throw new Error('impossible de récupérer les catégories.');
     }
   }
+
+  // Méthode static pour la création d'une catégorie
+  static async create(nom, prenom) {
+    try {
+      const result = await db.query('INSERT INTO categorie (nom, description) VALUES ($1, $2) RETURNING id, nom, description', [nom, description]);
+
+      return new Categorie(result.rows[0].id, result.rows[0].nom, result.rows[0].description);
+
+    } catch (err) {
+      logger.error('Erreur lors de la création de la catégorie.', {
+        error: err.message,
+        stack: err.stack,
+      });
+
+      throw new Error('Erreur lors de la création de la c&tégorie.');
+    }
+  }
 }
 
 
