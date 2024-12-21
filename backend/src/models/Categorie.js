@@ -70,7 +70,7 @@ class Categorie {
   // Méthode static pour vérifier si une catégorie existe déjà
   static async exists(nom) {
     try {
-      const result = await db.query('SELECT id FROM categorie WHERE LOWER(nom) = LOWER($1', [nom]);
+      const result = await db.query('SELECT id FROM categorie WHERE LOWER(nom) = LOWER($1)', [nom]);
 
       return result.rows.length > 0;
 
@@ -80,7 +80,7 @@ class Categorie {
         stack: err.stack,
         nom,
       });
-      
+
       throw new Error('Erreur lors de la vérification de l\'existence de la catégorie.');
     }
   }
