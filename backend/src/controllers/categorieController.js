@@ -39,6 +39,7 @@ async function getAllCategories(req, res) {
 }
 
 async function createCategorie(req, res) {
+
   const errors = validationResult(req);
   if(!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -47,6 +48,16 @@ async function createCategorie(req, res) {
   const { nom, description } = req.body;
 
   try {
+
+    // Vérifier si une catégorie avec le même nom existe déjà
+    const categorieExiste = await Categorie.exists(nom);
+    if (categorieExiste) {
+      logger.warn('Tentative de création d\'une catégorie existante.', { nom });
+      return res.status(409).json({
+        message: 'Une catégorie avec ce nom existe déjà.',
+      });
+    }
+    
     const nouvelleCategorie = await Categorie.create(nom, description);
 
     logger.info('Catégorie créée avec succès.', { nom, description });
