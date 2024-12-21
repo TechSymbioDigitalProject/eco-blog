@@ -68,4 +68,5 @@ async function createCategorie(req, res) {
 
 module.exports = {
   getAllCategories,
+  createCategorie
 };
