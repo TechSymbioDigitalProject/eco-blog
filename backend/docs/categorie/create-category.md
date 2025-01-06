@@ -95,3 +95,19 @@ Corps de la réponse :
 {
   "message": "Accès interdit: vous devez être administrateur."
 }
+
+
+5. 🛑 Erreur interne du serveur
+Statut HTTP : 500 Internal Server Error
+
+Corps de la réponse :
+{
+  "message": "Une erreur est survenue lors de la création de la catégorie."
+}
+
+
+## 🛡️ Notes de sécurité
+
+- Cette route est protégée par un middleware nécessitant que l'utilisateur soit authentifié et ait le rôle d'administrateur.
+
+- Le middleware vérifie également la validité du token CSRF.
