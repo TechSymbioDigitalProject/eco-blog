@@ -86,6 +86,22 @@ class Categorie {
   }
 
 
+  // Méthode static pour vzrifier si une catégorie existe par son ID
+  static async findById(id) {
+    try {
+
+    } catch (err) {
+      logger.error('Erreur lors de la récupération de la catégorie par id', {
+        error: err.message,
+        stack: err.stack,
+        categoryId: id,
+      });
+
+      throw new Error('Erreur lors de la récupération de la catégorie.');
+    }
+  }
+
+
   // Méthode static pour la mise à jour d'une catégorie existante
   static async update(id, nom, description) {
     try {
