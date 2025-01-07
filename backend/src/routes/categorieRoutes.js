@@ -20,6 +20,8 @@ const validateCreateCategorie = [
 
   body('description')
     .notEmpty()
+    .matches(/^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s.,;:'"!?()\-]+$/)
+    .withMessage('La description contient des caractères non autorisés.')
     .isLength({ max: 250 })
     .withMessage('La description ne doit pas dépasser 250 caractères.'),
 ];
@@ -36,6 +38,8 @@ const validateUpdateCategorie = [
 
   body('description')
     .optional()
+    .matches(/^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s.,;:'"!?()\-]+$/)
+    .withMessage('La description contient des caractères non autorisés.')
     .isLength({ max: 250 })
     .withMessage('La description ne doit pas dépasser 250 caractères.'),
 ]
