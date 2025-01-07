@@ -35,7 +35,7 @@ const validateUpdateCategorie = [
     .withMessage('Le nom de la catégorie ne doit pas dépasser 50 caractères.'),
 
   body('description')
-    .optional(),
+    .optional()
     .isLength({ max: 250 })
     .withMessage('La description ne doit pas dépasser 250 caractères.'),
 ]
