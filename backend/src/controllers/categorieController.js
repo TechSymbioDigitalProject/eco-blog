@@ -38,6 +38,7 @@ async function getAllCategories(req, res) {
   }
 }
 
+
 async function createCategorie(req, res) {
 
   const errors = validationResult(req);
@@ -77,7 +78,61 @@ async function createCategorie(req, res) {
 };
 
 
+async function updateCategorie(req, res) {
+
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+    return res.status(400).json({errors: errors.array() });
+  }
+
+  const { id } = req.params;
+  const { nom, description } = req.body;
+  
+  try {
+    if(!nom && !description) {
+      return res.status(400).json({
+        message: 'Veuillez fournir au moins un champ à mettre à jour (nom ou description).',
+      });
+    }
+
+    const categorieExistante = await Categorie.findById(id);
+    if(!categorieExistante) {
+      return res.status(404).json({ message: 'Catégorie introuvable.'});
+    }
+
+    const categorieMiseAJour = await Categorie.update(id, nom, description);
+
+    logger.info('Categorie mise à jour avec succès.', {
+      categoryId: id,
+      nom,
+      description,
+    });
+
+    res.status(200).json({
+      message: 'Categorie mise à jour avec succès',
+      categorie: {
+        id: categorieMiseAJour.id,
+        nom: categorieMiseAJour.nom,
+        description: categorieMiseAJour.description,
+      },
+    });
+
+  } catch (err) {
+    logger.error('Erreur lors de la mise à jour de la catégorie.', {
+      error: err.message,
+      stack: err.stack,
+      categoryId: id,
+    });
+
+    res.status(500).json({
+      message: 'Une erreur est survenue lors de la mise à jour de la catégorie.',
+    });
+  }
+}
+
+
 module.exports = {
   getAllCategories,
-  createCategorie
+  createCategorie,
+  updateCategorie,
 };
