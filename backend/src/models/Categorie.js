@@ -85,6 +85,48 @@ class Categorie {
     }
   }
 
+
+  // Méthode static pour la mise à jour d'une catégorie existante
+  static async update(id, nom, description) {
+    try {
+      const fieldsToUpdate = [];
+      const values = [];
+
+      if (nom) {
+        fieldsToUpdate.push('nom = $' + (fieldsToUpdate.length +1));
+        values.push(nom);
+      }
+
+      if (description) {
+        fieldsToUpdate.push('description = $' + (fieldsToUpdate.length +1 ));
+        values.push(description);
+      }
+
+      if (fieldsToUpdate.length === 0) {
+        throw new Error('aucun champ à mettre à jour');
+      }
+
+      values.push(id);
+
+      const query = `UPDATE categorie SET ${fieldsToUpdate.join(', ')} WHERE id = $${values.length} RETURNING *;`;
+      const result = await db.query(query, values);
+
+      if( result.rows.length > 0) {
+        return result.rows[0];
+      }
+
+      throw new Error('Mise à jour échouée : Catégorie introuvable.');
+
+    } catch (err) {
+      logger.error('Erreur lors de la mise à jour de la catégorie.', {
+        error: err.message,
+        categoryId: id,
+        nom,
+        description,
+      });
+      throw new errorMonitor('Erreur lors de la mise à jour de la catégorie.');
+    }
+  }
 }
 
 
