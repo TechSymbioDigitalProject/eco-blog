@@ -89,6 +89,17 @@ class Categorie {
   // Méthode static pour vzrifier si une catégorie existe par son ID
   static async findById(id) {
     try {
+      const query = 'SELECT * FROM categorie WHERE id = $1';
+      const result = await db.query(query, [id]);
+
+      if (result.rows.length > 0) {
+        const { id, nom, description } = result.rows[0];
+        return new Categorie(id, nom, description);
+      }
+  
+      return null; // Aucun résultat trouvé
+
+
 
     } catch (err) {
       logger.error('Erreur lors de la récupération de la catégorie par id', {
