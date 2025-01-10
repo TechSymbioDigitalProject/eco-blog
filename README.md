@@ -39,6 +39,7 @@
 ### Catégories
 - [Récupérer les catégories](./backend/docs/categorie/get-all-categories.md),
 - [Créer une nouvelle catégorie](./backend/docs/categorie/create-category.md),
+- [Mise à jour d'une catégorie](./backend/docs/categorie/update-category.md),
 
 
 
