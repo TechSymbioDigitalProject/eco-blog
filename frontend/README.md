@@ -1,22 +1,15 @@
-# frontend
+# `create-preact`
 
-## CLI Commands
+<h2 align="center">
+  <img height="256" width="256" src="./src/assets/preact.svg">
+</h2>
 
-```bash
-# install dependencies
-npm install
+<h3 align="center">Get started using Preact and Vite!</h3>
 
-# serve with hot reload at localhost:8080
-npm run dev
+## Getting Started
 
-# build for production with minification
-npm run build
+-   `npm run dev` - Starts a dev server at http://localhost:5173/
 
-# test the production build locally
-npm run serve
+-   `npm run build` - Builds for production, emitting to `dist/`. Prerenders all found routes in app to static HTML
 
-# run tests with jest and enzyme
-npm run test
-```
-
-For detailed explanation on how things work, checkout the [CLI Readme](https://github.com/developit/preact-cli/blob/master/README.md).
+-   `npm run preview` - Starts a server at http://localhost:4173/ to test production build locally
