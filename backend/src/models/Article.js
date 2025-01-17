@@ -87,7 +87,7 @@ class Article {
                 WHERE statut_publication = 'publié'
                 ORDER BY date_publication DESC; -- Articles les plus récents en premier
             `;
-            
+
       const result = await db.query(query);
       return result.rows; 
 
@@ -102,3 +102,5 @@ class Article {
   } 
 
 }
+
+module.exports = Article;
