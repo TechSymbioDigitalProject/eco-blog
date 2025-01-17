@@ -77,4 +77,28 @@ class Article {
       this._mainImageUrl = mainImageUrl;
   }
 
+
+  // Méthode pour lrécupérer les articles de la page d'accueil
+  static async getHomepageArticles() {
+    try {
+      const query = `
+                SELECT id, titre, main_image_url, meta_description, date_publication
+                FROM article
+                WHERE statut_publication = 'publié'
+                ORDER BY date_publication DESC; -- Articles les plus récents en premier
+            `;
+            
+      const result = await db.query(query);
+      return result.rows; 
+
+    } catch (err) {
+      logger.error('Erreur lors de la récupération des articles pour la page d\'accueil.', {
+        error: err.message,
+        stack: err.stack,
+      });
+
+      throw new Error('Impossible de récupérer les articles.');
+    }
+  } 
+
 }
