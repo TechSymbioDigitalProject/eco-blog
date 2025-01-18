@@ -112,6 +112,7 @@ class Article {
       `;
       const result = await db.query(query, [limit, offset]);
       return result.rows; // Retourner les articles paginés
+      
     } catch (err) {
       logger.error('Erreur lors de la récupération des articles paginés.', {
         error: err.message,
