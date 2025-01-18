@@ -124,7 +124,7 @@ class Article {
 
 
   // Méthode static pour la création d'un nouvel article
-  static async create(titre, statut_publication, auteur, categorie_id, meta_description, mainimageurl) {
+  static async create(titre, statutPublication, auteur, categorieId, metaDescription, mainImageUrl) {
     try {
       const query = `
       INSERT INTO article (titre, statut_publication, auteur, categorie_id, meta_description, main_image_url)

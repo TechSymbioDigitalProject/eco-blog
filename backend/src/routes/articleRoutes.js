@@ -2,6 +2,15 @@ const express = require('express');
 const { body } = require('express-validator');
 const articleController = require('../controllers/articleController');
 const authMiddleware = require('../middlewares/authMiddleware');
+const multer = require('multer');
+const path = require('path');
+
+
+// Configuration de multer pour le stockage temporaire des fichiers
+const upload = multer({
+  dest: path.join(__dirname, 'temp'), // Chemin temporaire
+  limits: { fileSize: 10 * 1024 * 1024 }, // Limite de 5MB par fichier
+});
 
 
 const router = express.Router();
@@ -43,7 +52,7 @@ const validateCreateArticle = [
 ];
 
 // Route pour la création d'un article
-router.post('/create', authMiddleware, validateCreateArticle, articleController.createArticleComplet);
+router.post('/create', authMiddleware,  upload.any(), validateCreateArticle, articleController.createArticleComplet);
 
 
 module.exports = router;
