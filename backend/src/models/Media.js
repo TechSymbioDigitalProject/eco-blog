@@ -55,5 +55,41 @@ class Media {
   }
 
 
+  // Méthode pour créer un nouveau média
+  static async create(sectionId, url, type, description, position) {
+    try {
+
+      const query = `
+        INSERT INTO media (section_id, url, type, description, position)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id, section_id, url, type, description, position;
+      `;
+
+      const result = await db.query(query, [sectionId, url, type, description, position]);
+
+      return new Media(
+        result.rows[0].id,
+        result.rows[0].section_id,
+        result.rows[0].url,
+        result.rows[0].type,
+        result.rows[0].description,
+        result.rows[0].position
+      );
+      
+    } catch (err) {
+      logger.error('Erreur lors de la création du média.', {
+        error: err.message,
+        stack: err.stack,
+        sectionId,
+        url,
+        type,
+        description,
+        position,
+      });
+
+      throw new Error('Impossible de créer le média.');
+    }
+  }
+
 
 }
