@@ -119,3 +119,5 @@ class Section {
     }
   }
 }
+
+module.exports = Section;
