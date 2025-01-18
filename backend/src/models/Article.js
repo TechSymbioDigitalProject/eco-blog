@@ -112,13 +112,44 @@ class Article {
       `;
       const result = await db.query(query, [limit, offset]);
       return result.rows; // Retourner les articles paginés
-      
+
     } catch (err) {
       logger.error('Erreur lors de la récupération des articles paginés.', {
         error: err.message,
         stack: err.stack,
       });
       throw new Error('Impossible de récupérer les articles paginés.');
+    }
+  }
+
+
+  // Méthode pour la création d'un nouvel article
+  static async create(titre, statut_publication, auteur, categorie_id, meta_description, mainimageurl) {
+    try {
+      const query = `
+      INSERT INTO article (titre, statut_publication, auteur, categorie_id, meta_description, main_image_url)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING id;
+      `;
+
+      const values = [titre, statutPublication, auteur, categorieId, metaDescription, mainImageUrl];
+      const result = await db.query(query, values);
+
+      if (result.rows.length === 0) {
+        throw new Error('Échec de la création de l\'article.');
+      }
+
+      return result.rows[0].id;
+
+    } catch (err) {
+      logger.error('Erreur lors de la création de l\'article.', {
+        error: err.message,
+        stack: err.stack,
+        titre,
+        auteur,
+      });
+
+      throw new Error('Erreur lors de la création de l\'article.');
     }
   }
 
