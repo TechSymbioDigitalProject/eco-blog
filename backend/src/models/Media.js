@@ -75,7 +75,7 @@ class Media {
         result.rows[0].description,
         result.rows[0].position
       );
-      
+
     } catch (err) {
       logger.error('Erreur lors de la création du média.', {
         error: err.message,
@@ -88,6 +88,41 @@ class Media {
       });
 
       throw new Error('Impossible de créer le média.');
+    }
+  }
+
+
+  // Méthode pour récupérer tous les média d'une section
+  static async findBySectionId(sectionId) {
+    try {
+      const query = `
+        SELECT id, section_id, url, type, description, position
+        FROM media
+        WHERE section_id = $1
+        ORDER BY position ASC;
+      `;
+      const result = await db.query(query, [sectionId]);
+
+      return result.rows.map(
+        (row) =>
+          new Media(
+            row.id,
+            row.section_id,
+            row.url,
+            row.type,
+            row.description,
+            row.position
+          )
+      );
+      
+    } catch (err) {
+      logger.error('Erreur lors de la récupération des médias.', {
+        error: err.message,
+        stack: err.stack,
+        sectionId,
+      });
+
+      throw new Error('Impossible de récupérer les médias.');
     }
   }
 
