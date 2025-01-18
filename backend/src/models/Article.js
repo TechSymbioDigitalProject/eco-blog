@@ -78,7 +78,7 @@ class Article {
   }
 
 
-  // Méthode pour récupérer les articles de la page d'accueil admin
+  // Méthode static pour récupérer les articles de la page d'accueil admin
   static async getHomepageArticles() {
     try {
       const query = `
@@ -101,7 +101,7 @@ class Article {
     }
   } 
 
-  // Méthode pour la pagination des articles de la page d'accueil public
+  // Méthode static pour la pagination des articles de la page d'accueil public
   static async findPaginated(offset = 0, limit = 10) {
     try {
       const query = `
@@ -123,7 +123,7 @@ class Article {
   }
 
 
-  // Méthode pour la création d'un nouvel article
+  // Méthode static pour la création d'un nouvel article
   static async create(titre, statut_publication, auteur, categorie_id, meta_description, mainimageurl) {
     try {
       const query = `
@@ -150,6 +150,46 @@ class Article {
       });
 
       throw new Error('Erreur lors de la création de l\'article.');
+    }
+  }
+
+
+  // Méthode pour récupérer un article par son ID
+  static async findById(id) {
+    try {
+      const query = `
+      SELECT id, titre, statut_publication, auteur, categorie_id, date_publication, meta_description, main_image_url
+      FROM article
+      WHERE id = $1;
+      `;
+
+      const result = await db.query(query, [id]);
+
+      if (result.rows.length === 0) {
+        return null;
+      }
+
+      const article = result.rows[0];
+      return new Article(
+        article.id,
+        article.titre,
+        article.statut_publication,
+        article.auteur,
+        article.categorie_id,
+        article.date_publication,
+        article.meta_description,
+        article.main_image_url
+      );
+
+    } catch (err) {
+      logger.error('Erreur lors de la récupération de l\'article par ID.', {
+        error: err.message,
+        stack: err.stack,
+        articleId: id,
+      });
+
+      throw new Error('Impossible de récupérer l\'article.');
+
     }
   }
 
