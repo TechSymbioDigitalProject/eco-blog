@@ -83,7 +83,7 @@ class Section {
       return result.rows.map(
         (row) => new Section(row.id, row.article_id, row.titre, row.position)
       );
-      
+
     } catch (err) {
       logger.error('Erreur lors de la récupération des sections.', {
         error: err.message,
@@ -95,4 +95,27 @@ class Section {
     }
   }
 
+
+  // Méthode pour supprimer une section
+  static async delete(id) {
+    try {
+      const query = `
+        DELETE FROM section
+        WHERE id = $1
+        RETURNING id;
+      `;
+      const result = await db.query(query, [id]);
+
+      return result.rowCount > 0;
+
+    } catch (err) {
+      logger.error('Erreur lors de la suppression de la section.', {
+        error: err.message,
+        stack: err.stack,
+        sectionId: id,
+      });
+
+      throw new Error('Impossible de supprimer la section.');
+    }
+  }
 }
