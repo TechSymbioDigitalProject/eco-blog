@@ -114,7 +114,7 @@ class Media {
             row.position
           )
       );
-      
+
     } catch (err) {
       logger.error('Erreur lors de la récupération des médias.', {
         error: err.message,
@@ -123,6 +123,30 @@ class Media {
       });
 
       throw new Error('Impossible de récupérer les médias.');
+    }
+  }
+
+
+  // Méthode pour mettre à jour l'url d'un média
+  async updateUrl(newUrl) {
+    try {
+      const query = `
+        UPDATE media
+        SET url = $1
+        WHERE id = $2;
+      `;
+
+      await db.query(query, [newUrl, this._id]);
+      this._url = newUrl;
+
+    } catch (err) {
+      logger.error('Erreur lors de la mise à jour de l\'URL du média.', {
+        error: err.message,
+        mediaId: this._id,
+        newUrl,
+      });
+
+      throw new Error('Impossible de mettre à jour l\'URL du média.');
     }
   }
 
