@@ -12,7 +12,7 @@ async function getAllHomepageArticles(req, res) {
       titre: article.titre,
       image: article.main_image_url,
       description: article.meta_description,
-      date: article.date_publication,
+      date: new Date(article.date_publication).toLocaleDateString('fr-FR'),
     }));
 
     logger.info('Liste des articles récupérée avec succès.', {
