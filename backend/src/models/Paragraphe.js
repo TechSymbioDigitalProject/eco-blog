@@ -45,7 +45,7 @@ class Paragraphe {
         VALUES ($1, $2, $3)
         RETURNING id, section_id, contenu, position;
       `;
-      
+
       const result = await db.query(query, [sectionId, contenu, position]);
 
       return new Paragraphe(
@@ -65,6 +65,34 @@ class Paragraphe {
       });
 
       throw new Error('Impossible de créer le paragraphe.');
+    }
+  }
+
+
+  // Méthode pour récupérer tous les paragraphes d'une section
+  static async findBySectionId(sectionId) {
+    try {
+      const query = `
+        SELECT id, section_id, contenu, position
+        FROM paragraphe
+        WHERE section_id = $1
+        ORDER BY position ASC;
+      `;
+      
+      const result = await db.query(query, [sectionId]);
+
+      return result.rows.map(
+        (row) => new Paragraphe(row.id, row.section_id, row.contenu, row.position)
+      );
+       
+    } catch (err) {
+      logger.error('Erreur lors de la récupération des paragraphes.', {
+        error: err.message,
+        stack: err.stack,
+        sectionId,
+      });
+
+      throw new Error('Impossible de récupérer les paragraphes.');
     }
   }
 }
