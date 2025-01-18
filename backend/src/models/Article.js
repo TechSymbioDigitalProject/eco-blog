@@ -78,7 +78,7 @@ class Article {
   }
 
 
-  // Méthode pour lrécupérer les articles de la page d'accueil
+  // Méthode pour récupérer les articles de la page d'accueil admin
   static async getHomepageArticles() {
     try {
       const query = `
@@ -100,6 +100,26 @@ class Article {
       throw new Error('Impossible de récupérer les articles.');
     }
   } 
+
+  // Méthode pour la pagination des articles de la page d'accueil public
+  static async findPaginated(offset = 0, limit = 10) {
+    try {
+      const query = `
+        SELECT id, titre, main_image_url, meta_description, date_publication
+        FROM article
+        ORDER BY date_publication DESC
+        LIMIT $1 OFFSET $2
+      `;
+      const result = await db.query(query, [limit, offset]);
+      return result.rows; // Retourner les articles paginés
+    } catch (err) {
+      logger.error('Erreur lors de la récupération des articles paginés.', {
+        error: err.message,
+        stack: err.stack,
+      });
+      throw new Error('Impossible de récupérer les articles paginés.');
+    }
+  }
 
 }
 
