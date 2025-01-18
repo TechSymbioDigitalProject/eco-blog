@@ -67,4 +67,32 @@ class Section {
     }
   }
 
+
+  // Méthode pour récupérer toutes les sections associées à un article
+  static async findByArticleId(articleId) {
+    try {
+      const query = `
+      SELECT id, article_id, titre, position
+      FROM section
+      WHERE article_id = $1
+      ORDER BY position ASC;
+      `;
+
+      const result = await db.query(query, [articleId]);
+
+      return result.rows.map(
+        (row) => new Section(row.id, row.article_id, row.titre, row.position)
+      );
+      
+    } catch (err) {
+      logger.error('Erreur lors de la récupération des sections.', {
+        error: err.message,
+        stack: err.stack,
+        articleId,
+      });
+
+      throw new Error('Impossible de récupérer les sections.');
+    }
+  }
+
 }
