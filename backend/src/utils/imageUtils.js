@@ -36,8 +36,14 @@ async function processImage(imageBuffer, destinationPath) {
 
   } catch (error) {
     logger.error('Erreur lors du traitement de l\'image :', { error: error.message });
-    
+
     throw error;
   }
+}
 
+
+module.exports = {
+  createArticleFolder,
+  generateImageName,
+  processImage,
 }
