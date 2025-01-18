@@ -10,6 +10,7 @@ const csrf = require('csurf');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const categorieRoutes = require('./routes/categorieRoutes');
+const articleRoutes = require('./routes/articleRoutes');
 
 // Création de l'application express
 const app = express();
@@ -18,7 +19,7 @@ const app = express();
 app.use(cors({
   origin: 'http://localhost:5173', // Autoriser uniquement cette origine (front-end)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Méthodes autorisées
-  allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'], // En-têtes autorisés
   credentials: true, // Si vous utilisez des cookies ou des sessions
 }));
 
@@ -48,6 +49,9 @@ app.use('/api/users', userRoutes);
 
 // Routes pour les catégories
 app.use('/api/categories', categorieRoutes);
+
+// Routes pour les articles
+app.use('/api/articles', articleRoutes);
 
 // Route de bienvenue
 // Vérifier que le serveur fonctionne correctement
