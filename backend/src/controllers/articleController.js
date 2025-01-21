@@ -99,40 +99,56 @@ async function createArticleComplet(req, res) {
 
     // Créer les sections, paragraphes et médias
     for (const sectionData of sections) {
-      const sectionId = await Section.create({
-        articleId,
-        titre: sectionData.titre,
-        position: sectionData.position,
-      });
+      const sectionId = await Section.create(
+        articleId, 
+        sectionData.titre,
+        sectionData.position 
+      );
 
       if (Array.isArray(sectionData.paragraphes)) {
         for (const [index, contenu] of sectionData.paragraphes.entries()) {
-          await Paragraphe.create({
+          await Paragraphe.create(
             sectionId,
             contenu,
-            position: index + 1,
-          });
+            index + 1,
+          );
         }
       }
 
       if (Array.isArray(sectionData.medias)) {
         for (const [index, mediaData] of sectionData.medias.entries()) {
-          const { buffer, originalname, mimetype, description } = mediaData;
+          // Rechercher le fichier correspondant dans req.files
+          const file = req.files.find(
+            (f) => f.fieldname === `sections[${sections.indexOf(sectionData)}][medias][${index}][file]`
+          );
+      
+          // Vérifier si le fichier est trouvé
+          if (!file) {
+            logger.error('Fichier manquant pour le média', { mediaData, index, sectionIndex: sections.indexOf(sectionData) });
+            throw new Error('Fichier manquant pour le média.');
+          }
+      
+          const { path: tempPath, mimetype, originalname } = file; // Détails du fichier
           const type = mimetype.startsWith('image/') ? 'image' : 'video';
-
-          const mediaId = await Media.create({
+      
+          // Créer le média dans la base de données et récupérer l'ID
+          const mediaId = await Media.create(
             sectionId,
-            url: null,
+            null, // L'URL sera mise à jour après le traitement de l'image
             type,
-            description,
-            position: index + 1,
-          });
-
+            mediaData.description,
+            index + 1
+          );
+      
           if (type === 'image') {
+            // Traiter les images
             const articleFolder = createArticleFolder(articleId);
-            const imageName = generateImageName(articleId, mediaId);
+            const imageName = generateImageName(articleId, mediaId); // mediaId est directement l'ID
             const imagePath = `${articleFolder}/${imageName}`;
-            await processImage(buffer, imagePath);
+      
+            await processImage(tempPath, imagePath);
+      
+            // Mettre à jour l'URL du média dans la base de données
             await Media.updateUrl(mediaId, `/uploads/media/images/article${articleId}/${imageName}`);
           }
         }
