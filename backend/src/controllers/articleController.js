@@ -7,6 +7,7 @@ const { createArticleFolder, generateImageName, generateMainImageName, processIm
 const db = require('../config/db');
 const logger = require('../config/logger');
 
+const tempFolderPath = path.join(__dirname, '../uploads/temp');
 
 // Méthode poru récupérer les articles à afficher sur la page d'accueil
 async function getAllHomepageArticles(req, res) {
@@ -190,12 +191,19 @@ if (!mainImageFile) {
     // Commit de la transaction
     await db.query('COMMIT');
 
+    // Nettoyer le dossier temporaire après succès
+    clearTempFolder(tempFolderPath);
+
     res.status(201).json({ message: 'Article créé avec succès.', articleId });
 
   } catch (err) {
     // En cas d'erreur, rollback de la transaction
     await db.query('ROLLBACK');
     logger.error('Erreur lors de la création de l\'article complet.', { error: err.message, stack: err.stack });
+
+    // Nettoyer le dossier temporaire en cas d'échec
+    clearTempFolder(tempFolderPath);
+    
     res.status(500).json({ message: 'Une erreur est survenue lors de la création de l\'article.' });
   }
 }
