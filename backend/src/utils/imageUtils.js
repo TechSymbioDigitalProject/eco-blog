@@ -45,9 +45,33 @@ async function processImage(imageBuffer, destinationPath) {
 }
 
 
+// fonction pour nettoyer le dossier temp 
+function clearTempFolder(tempFolderPath) {
+  fs.readdir(tempFolderPath, (err, files) => {
+    if (err) {
+      logger.error('Erreur lors de la lecture du dossier temporaire', { error: err.message });
+      return;
+    }
+
+    for (const file of files) {
+      const filePath = path.join(tempFolderPath, file);
+
+      fs.unlink(filePath, (unlinkErr) => {
+        if (unlinkErr) {
+          logger.error('Erreur lors de la suppression d\'un fichier temporaire', { file: filePath, error: unlinkErr.message });
+        } else {
+          logger.info('Fichier temporaire supprimé', { file: filePath });
+        }
+      });
+    }
+  });
+}
+
+
 module.exports = {
   createArticleFolder,
   generateMainImageName,
   generateImageName,
   processImage,
+  clearTempFolder,
 }
