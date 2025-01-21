@@ -3,7 +3,7 @@ const Article = require('../models/Article');
 const Section = require('../models/Section');
 const Paragraphe = require('../models/Paragraphe');
 const Media = require('../models/Media');
-const { createArticleFolder, generateImageName, processImage } = require ('../utils/imageUtils');
+const { createArticleFolder, generateImageName, generateMainImageName, processImage, clearTempFolder } = require ('../utils/imageUtils');
 const db = require('../config/db');
 const logger = require('../config/logger');
 
@@ -97,6 +97,39 @@ async function createArticleComplet(req, res) {
       main_image_url || null
     );
 
+    // Créer le dossier pour les médias de l'article
+    const articleFolder = createArticleFolder(articleId);
+
+      logger.info('Fichiers reçus', { files: req.files });
+
+      const mainImageFile = req.files.find((file) => file.fieldname === 'main_image');
+
+if (!mainImageFile) {
+  logger.warn('Aucune image principale trouvée dans la requête');
+} else {
+  logger.info('main_image trouvé', { mainImageFile });
+
+  const { path: tempPath, mimetype } = mainImageFile;
+
+  if (!mimetype.startsWith('image/')) {
+    logger.error('Le fichier de l\'image principale n\'est pas une image', { mimetype });
+    throw new Error('Le fichier de l\'image principale doit être une image.');
+  }
+
+  const mainImageName = generateMainImageName(articleId);
+  const mainImagePath = `${articleFolder}/${mainImageName}`;
+
+  // Traiter et enregistrer l'image principale
+  await processImage(tempPath, mainImagePath);
+
+  // Mettre à jour l'URL de l'image principale dans la base de données
+  const mainImageUrl = `/uploads/media/images/article${articleId}/${mainImageName}`;
+  await Article.updateMainImageUrl(articleId, mainImageUrl);
+
+  logger.info('Image principale enregistrée et URL mise à jour', { mainImageUrl });
+}
+
+
     // Créer les sections, paragraphes et médias
     for (const sectionData of sections) {
       const sectionId = await Section.create(
@@ -142,7 +175,6 @@ async function createArticleComplet(req, res) {
       
           if (type === 'image') {
             // Traiter les images
-            const articleFolder = createArticleFolder(articleId);
             const imageName = generateImageName(articleId, mediaId); // mediaId est directement l'ID
             const imagePath = `${articleFolder}/${imageName}`;
       
