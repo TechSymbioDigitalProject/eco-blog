@@ -8,8 +8,8 @@ const path = require('path');
 
 // Configuration de multer pour le stockage temporaire des fichiers
 const upload = multer({
-  dest: path.join(__dirname, 'temp'), // Chemin temporaire
-  limits: { fileSize: 10 * 1024 * 1024 }, // Limite de 5MB par fichier
+  dest: path.join(__dirname, '../uploads/temp'), // Dossier temporaire
+  limits: { fileSize: 10 * 1024 * 1024 }, // Limite de 10MB par fichier
 });
 
 
@@ -52,7 +52,13 @@ const validateCreateArticle = [
 ];
 
 // Route pour la création d'un article
-router.post('/create', authMiddleware,  upload.any(), validateCreateArticle, articleController.createArticleComplet);
+router.post(
+  '/create',
+  authMiddleware,
+  upload.any(),
+  validateCreateArticle,
+  articleController.createArticleComplet
+);
 
 
 module.exports = router;
