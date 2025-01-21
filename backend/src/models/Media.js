@@ -55,27 +55,17 @@ class Media {
   }
 
 
-  // Méthode pour créer un nouveau média
   static async create(sectionId, url, type, description, position) {
     try {
-
       const query = `
         INSERT INTO media (section_id, url, type, description, position)
         VALUES ($1, $2, $3, $4, $5)
-        RETURNING id, section_id, url, type, description, position;
+        RETURNING id;
       `;
-
+  
       const result = await db.query(query, [sectionId, url, type, description, position]);
-
-      return new Media(
-        result.rows[0].id,
-        result.rows[0].section_id,
-        result.rows[0].url,
-        result.rows[0].type,
-        result.rows[0].description,
-        result.rows[0].position
-      );
-
+  
+      return result.rows[0].id;
     } catch (err) {
       logger.error('Erreur lors de la création du média.', {
         error: err.message,
@@ -86,7 +76,7 @@ class Media {
         description,
         position,
       });
-
+  
       throw new Error('Impossible de créer le média.');
     }
   }
@@ -128,27 +118,25 @@ class Media {
 
 
   // Méthode pour mettre à jour l'url d'un média
-  async updateUrl(newUrl) {
+  static async updateUrl(id, url) {
     try {
       const query = `
         UPDATE media
         SET url = $1
         WHERE id = $2;
       `;
-
-      await db.query(query, [newUrl, this._id]);
-      this._url = newUrl;
-
+      await db.query(query, [url, id]);
     } catch (err) {
       logger.error('Erreur lors de la mise à jour de l\'URL du média.', {
         error: err.message,
-        mediaId: this._id,
-        newUrl,
+        stack: err.stack,
+        mediaId: id,
+        url,
       });
-
       throw new Error('Impossible de mettre à jour l\'URL du média.');
     }
   }
-
-
 }
+
+
+module.exports = Media;
