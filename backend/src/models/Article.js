@@ -193,6 +193,28 @@ class Article {
     }
   }
 
+
+  // Méthode pour mise à jour de l'url de l'image principale
+  static async updateMainImageUrl(articleId, mainImageUrl) {
+    try {
+      const query = `
+        UPDATE article
+        SET main_image_url = $1
+        WHERE id = $2;
+      `;
+      await db.query(query, [mainImageUrl, articleId]);
+      logger.info('URL de l\'image principale mise à jour avec succès.', { articleId, mainImageUrl });
+    } catch (err) {
+      logger.error('Erreur lors de la mise à jour de l\'URL de l\'image principale.', {
+        error: err.message,
+        stack: err.stack,
+        articleId,
+        mainImageUrl,
+      });
+      throw new Error('Impossible de mettre à jour l\'URL de l\'image principale.');
+    }
+  }
+
 }
 
 module.exports = Article;
