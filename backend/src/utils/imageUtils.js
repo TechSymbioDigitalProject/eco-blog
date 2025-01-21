@@ -18,6 +18,9 @@ function createArticleFolder(articleId) {
   return articleFolder;
 };
 
+function generateMainImageName(articleId) {
+  return `main-article${articleId}.webp`;
+}
 
 // Fonction pour générer un nom de fichier unique pour une image
 function generateImageName(articleId, mediaId) {
@@ -44,6 +47,7 @@ async function processImage(imageBuffer, destinationPath) {
 
 module.exports = {
   createArticleFolder,
+  generateMainImageName,
   generateImageName,
   processImage,
 }
