@@ -96,3 +96,6 @@ class Paragraphe {
     }
   }
 }
+
+
+module.exports = Paragraphe;
