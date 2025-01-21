@@ -45,15 +45,10 @@ class Section {
         VALUES ($1, $2, $3)
         RETURNING id, article_id, titre, position;
       `;
+
       const result = await db.query(query, [articleId, titre, position]);
-
-      return new Section(
-        result.rows[0].id,
-        result.rows[0].article_id,
-        result.rows[0].titre,
-        result.rows[0].position
-      );
-
+      
+      return result.rows[0].id;
     } catch (err) {
       logger.error('Erreur lors de la création de la section.', {
         error: err.message,
@@ -62,7 +57,6 @@ class Section {
         titre,
         position,
       });
-
       throw new Error('Impossible de créer la section.');
     }
   }
