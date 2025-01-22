@@ -43,11 +43,9 @@ const AdminLogin = () => {
     setFormErrors({ email: '', password: '' });
 
     try {
-      await login(email, password);
-    } catch {
-      // Les erreurs sont gérées dans le contexte
+      await login(email, password); 
     } finally {
-      setLoading(false);
+      setLoading(false); 
     }
   };
 
