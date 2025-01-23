@@ -2,6 +2,7 @@
 import { useContext, useState } from "preact/hooks";
 import { AuthContext } from "../context/AuthContext";
 import { validateEmail, validatePassword } from "../utils/validationRules";
+import { route } from 'preact-router';
 
 const AdminLogin = () => {
   const { login, error } = useContext(AuthContext);
@@ -43,7 +44,8 @@ const AdminLogin = () => {
     setFormErrors({ email: '', password: '' });
 
     try {
-      await login(email, password); 
+      await login(email, password);
+      route('/admin-home'); 
     } finally {
       setLoading(false); 
     }
