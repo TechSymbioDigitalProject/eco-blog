@@ -7,9 +7,13 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@reduxjs/toolkit": "^2.5.0",
+		"axios": "^1.7.9",
 		"preact": "^10.22.1",
 		"preact-iso": "^2.8.1",
-		"preact-render-to-string": "^6.5.13"
+		"preact-render-to-string": "^6.5.13",
+		"react-redux": "^9.2.0",
+		"swr": "^2.3.0"
 	},
 	"devDependencies": {
 		"@preact/preset-vite": "^2.9.0",

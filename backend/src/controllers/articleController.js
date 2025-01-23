@@ -6,6 +6,7 @@ const Media = require('../models/Media');
 const { createArticleFolder, generateImageName, generateMainImageName, processImage, clearTempFolder } = require ('../utils/imageUtils');
 const db = require('../config/db');
 const logger = require('../config/logger');
+const path = require('path');
 
 const tempFolderPath = path.join(__dirname, '../uploads/temp');
 

@@ -65,4 +65,7 @@ router.post('/password-reset-request', validatePasswordResetRequest, authControl
 // Route pour réinitialiser le mot de passe
 router.post('/reset-password', validateResetPassword, authController.resetPassword);
 
+// Route pour vérifier si l'utilisateur est connecté
+router.get('/check-session', authController.checkSession);
+
 module.exports = router;

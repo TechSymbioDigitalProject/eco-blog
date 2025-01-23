@@ -32,9 +32,21 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Middleware pour parser les cookies
 app.use(cookieParser());
 
-// Activer la protection CSRF avec un cookie
+// Activer la protection CSRF sauf pour certaines routes spécifiques
 const csrfProtection = csrf({ cookie: true });
-app.use(csrfProtection);
+
+app.use((req, res, next) => {
+  // Liste des routes à exclure de la protection CSRF
+  const excludedRoutes = ['/api/auth/login'];
+
+  // Si la route actuelle est dans la liste des exclusions, continuer sans appliquer CSRF
+  if (excludedRoutes.includes(req.path)) {
+    return next();
+  }
+
+  // Sinon, appliquer la protection CSRF
+  csrfProtection(req, res, next);
+});
 
 // Route pour envoyer le token CSRF au front-end
 app.get('/api/csrf-token', (req, res) => {
