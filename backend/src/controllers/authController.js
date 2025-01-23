@@ -173,9 +173,42 @@ async function resetPassword(req, res) {
 }
 
 
+// Méthode pour vérifier si l'utilisateur est connecté
+async function checkSession(req, res) {
+  try {
+    // Récupérer le token JWT depuis le cookie
+    const token = req.cookies.track;
+
+    // Vérifier si le token existe
+    if (!token) {
+      return res.status(401).json({ message: 'Non authentifié.' });
+    }
+
+    // Vérifier et décoder le token
+    const decoded = authService.verifyToken(token);
+
+    // Renvoyer les informations utilisateur décodées
+    res.status(200).json({
+      id: decoded.id,
+      nom: decoded.nom,
+      prenom: decoded.prenom,
+      roleId: decoded.roleId,
+    });
+  } catch (err) {
+    // En cas d'erreur (token invalide ou expiré)
+    logger.warn('Échec de la vérification de session.', {
+      error: err.message,
+      stack: err.stack,
+    });
+    res.status(401).json({ message: 'Session invalide ou expirée.' });
+  }
+}
+
+
 module.exports = {
   login,
   logout,
   requestPasswordReset,
   resetPassword,
+  checkSession,
 };
